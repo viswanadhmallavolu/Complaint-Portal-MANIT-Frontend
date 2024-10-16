@@ -2,7 +2,7 @@ import React from "react";
 
 const LoginForm = () => {
   return (
-      <div className="max-lg:min-w-[50%] max-sm:w-2/3 max-[400px]:w-full lg:w-1/3 flex flex-col p-5 bg-white rounded-lg shadow-lg text-violet-500">
+      <div className="w-full flex flex-col p-5 bg-white rounded-lg shadow-lg text-violet-500">
         <h1 className="my-6 text-3xl font-semibold text-center">Login</h1>
         <div className="mb-4">
           <input

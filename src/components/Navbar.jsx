@@ -1,81 +1,135 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+
 const Navbar = () => {
   const { auth } = useAuth();
+  const [isFixed, setIsFixed] = useState(false);
+  const navbarRef = useRef(null);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const navbar = navbarRef.current;
+    let navbarOffset = navbar.offsetTop;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY.current) {
+        // Scrolling down
+        if (currentScrollY > navbarOffset && !isFixed) {
+          setIsFixed(true);
+        }
+      } else {
+        // Scrolling up
+        if (currentScrollY <= navbarOffset && isFixed) {
+          setIsFixed(false);
+        }
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", () => {
+      navbarOffset = navbar.offsetTop;
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", () => {
+        navbarOffset = navbar.offsetTop;
+      });
+    };
+  }, [isFixed]);
+
   return (
-    <div className="w-[100vw] bg-[#003366] text-white max-sm:text-sm">
-      <div className="flex justify-center items-center">
-        <div className="max-w-[1200px] w-full flex flex-col gap-2 max-sm:gap-3 justify-start px-8 max-sm:px-2 py-3">
-          <div>
-            <img
-              src="/logo/MANIT-Logo.png"
-              alt="MANIT"
-              className="max-sm:w-full sm:w-[70%] lg:w-[50%]"
-            />
-            <span>
-              <p className="font-bold">Complaint Management System</p>
-            </span>
-          </div>
-          {auth.role === "student" ? (
-            <div className="rounded-lg px-5 py-2 flex gap-5 border-2 border-white">
-              <NavLink
-                to="/student/home"
-                className={({ isActive }) =>
-                  isActive
-                    ? "border-b-2 border-white"
-                    : "border-b-2 border-transparent"
-                }
-              >
-                Home
-              </NavLink>
-              <NavLink
-                to="/student/profile"
-                className={({ isActive }) =>
-                  isActive
-                    ? "border-b-2 border-white"
-                    : "border-b-2 border-transparent"
-                }
-              >
-                Profile
-              </NavLink>
-              <NavLink
-                to="/student/complaint"
-                className={({ isActive }) =>
-                  isActive
-                    ? "border-b-2 border-white"
-                    : "border-b-2 border-transparent"
-                }
-              >
-                Complaints
-              </NavLink>
-            </div>
-          ) : (
-            <div className="rounded-lg px-5 py-2 flex gap-5 border-2 border-white">
-              <NavLink
-                to="/admin/dashboard"
-                className={({ isActive }) =>
-                  isActive
-                    ? "border-b-2 border-white"
-                    : "border-b-2 border-transparent"
-                }
-              >
-                Dashboard
-              </NavLink>
-              <NavLink
-                to="/admin/complaints"
-                className={({ isActive }) =>
-                  isActive
-                    ? "border-b-2 border-white"
-                    : "border-b-2 border-transparent"
-                }
-              >
-                Manage Complaints
-              </NavLink>
-            </div>
-          )}
+    <div>
+      <div className="w-full bg-[#003366] text-white max-sm:text-sm">
+        {/* Image Section */}
+        <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 pt-3">
+          <img
+            src="/logo/MANIT-Logo.png"
+            alt="MANIT"
+            className="max-sm:w-full sm:w-[70%] lg:w-[50%]"
+          />
         </div>
       </div>
+      <div
+        ref={navbarRef}
+        className={`w-full bg-[#003366] text-white max-sm:text-sm ${
+          isFixed ? "fixed top-0 left-0 right-0 z-50" : ""
+        }`}
+      >
+        {/* Sticky Navbar Section */}
+        <div className="bg-[#003366]">
+          <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 pb-3 flex flex-col gap-2 max-sm:gap-3">
+            <span className="pt-2">
+              <p className="font-bold">Complaint Management Portal</p>
+            </span>
+            {auth.role === "student" ? (
+              <div className="rounded-lg px-5 py-2 flex gap-5 border-2 border-white">
+                <NavLink
+                  to="/student/home"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "border-b-2 border-white"
+                      : "border-b-2 border-transparent"
+                  }
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/student/profile"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "border-b-2 border-white"
+                      : "border-b-2 border-transparent"
+                  }
+                >
+                  Profile
+                </NavLink>
+                <NavLink
+                  to="/student/complaint"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "border-b-2 border-white"
+                      : "border-b-2 border-transparent"
+                  }
+                >
+                  Complaints
+                </NavLink>
+              </div>
+            ) : auth.role === "admin" ? (
+              <div className="rounded-lg px-5 py-2 flex gap-5 border-2 border-white">
+                <NavLink
+                  to="/admin/dashboard"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "border-b-2 border-white"
+                      : "border-b-2 border-transparent"
+                  }
+                >
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  to="/admin/complaints"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "border-b-2 border-white"
+                      : "border-b-2 border-transparent"
+                  }
+                >
+                  Manage Complaints
+                </NavLink>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </div>
+      {/* {isFixed && (
+        <div className="bg-[#1261A0]" style={{ height: "100px" }}></div>
+      )} */}
     </div>
   );
 };
