@@ -64,16 +64,7 @@ const App = () => {
 };
 
 const AuthenticatedRoute = () => {
-  const { auth, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-slate-300 font-bold text-gray-700">
-        <div>Authorizing...</div>
-      </div>
-    );
-  }
-
+  const { auth } = useAuth();
   return !auth ? <Login /> : <RedirectBasedOnRole />;
 };
 

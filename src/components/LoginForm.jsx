@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const LoginForm = () => {
-  const { login,setIsLoading } = useAuth();
+  const { login,setIsLoading,isLoading } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,8 +13,6 @@ const LoginForm = () => {
       setError("Username and Password are required");
       setTimeout(() => {
         setError("");
-        setUsername("");
-        setPassword("");
       }, 3000);
       return;
     }
@@ -27,10 +25,9 @@ const LoginForm = () => {
       setError("Invalid credentials. Please try again.");
       setTimeout(() => {
         setError("");
-        setUsername("");
-        setPassword("");
       }, 3000);
-    } finally {
+    }
+    finally {
       setIsLoading(false);
     }
   };
@@ -62,7 +59,7 @@ const LoginForm = () => {
           type="submit"
           className="w-full py-2 mt-4 text-white bg-blue-500 rounded-sm hover:bg-blue-600 font-semibold transition-all"
         >
-          Sign In
+          {isLoading?"LoggingIn...":"LogIn"}
         </button>
         {error ? (
           <div className="text-red-500 text-center mt-4">{error}</div>
