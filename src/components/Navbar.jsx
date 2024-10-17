@@ -147,7 +147,7 @@ const Navbar = () => {
                       }`
                     }
                   >
-                    Manage Complaints
+                    Complaints
                   </NavLink>
                 </div>
                 <div
