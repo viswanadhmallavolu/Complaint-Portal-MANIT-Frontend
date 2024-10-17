@@ -1,9 +1,7 @@
 import React from 'react'
 
 const AdminManageComplaints = () => {
-  return (
-    <div>AdminManageComplaints</div>
-  )
+  return <div className="min-h-[50vh]">AdminManageComplaints</div>;
 }
 
-export default AdminManageComplaints
+export default AdminManageComplaints;

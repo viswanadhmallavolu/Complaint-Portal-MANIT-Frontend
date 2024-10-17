@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {Routes, Route } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import Home from "./pages/students/Home";
 import Login from "./pages/Login";
@@ -11,7 +11,6 @@ import { useAuth } from "./context/AuthContext";
 
 const App = () => {
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<AuthenticatedRoute />} />
@@ -61,7 +60,6 @@ const App = () => {
           />
         </Route>
       </Routes>
-    </Router>
   );
 };
 
