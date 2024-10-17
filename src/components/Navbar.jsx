@@ -156,9 +156,9 @@ const Navbar = () => {
                 >
                   <FontAwesomeIcon
                     icon={faRightFromBracket}
-                    className="sm:pr-2"
+                    className="s350:pr-1"
                   />
-                  <p className="max-sm:hidden">Logout</p>
+                  <p className="max-s350:hidden">Logout</p>
                 </div>
               </div>
             ) : null}
