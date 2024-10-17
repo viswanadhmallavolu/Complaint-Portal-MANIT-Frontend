@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState({
         userData: {},
         token: "",
-        role:""
+        role:"student"
   });
   const [isLoading, setIsLoading] = useState(false);
   const login = async (ldapId, password) => {

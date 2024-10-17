@@ -81,7 +81,7 @@ const AuthenticatedRoute = () => {
 
 const RedirectBasedOnRole = () => {
   const { auth } = useAuth();
-
+  if (!auth) return <Login />;
   if (auth?.role === "student") {
     return <Home />;
   } else if (auth?.role === "admin") {
@@ -93,7 +93,6 @@ const RedirectBasedOnRole = () => {
 
 const ProtectedRoute = ({ role, children }) => {
   const { auth, isLoading } = useAuth();
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-slate-300 font-bold text-gray-700">
@@ -105,7 +104,7 @@ const ProtectedRoute = ({ role, children }) => {
   if (!auth || auth.role !== role) {
     return <Login />;
   }
-
+  
   return children;
 };
 

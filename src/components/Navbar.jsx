@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 const Navbar = () => {
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
   const [isFixed, setIsFixed] = useState(false);
   const navbarRef = useRef(null);
   const lastScrollY = useRef(0);
@@ -57,71 +59,105 @@ const Navbar = () => {
       </div>
       <div
         ref={navbarRef}
-        className={`w-full bg-[#003366] text-white max-sm:text-sm ${
+        className={`w-full bg-[#003366] text-white ${
           isFixed ? "fixed top-0 left-0 right-0 z-50" : ""
         }`}
       >
         {/* Sticky Navbar Section */}
         <div className="bg-[#003366]">
-          <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 pb-3 flex flex-col gap-2 max-sm:gap-3">
-            <span className="pt-2">
+          <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 flex flex-col ga max-sm:gap-3">
+            <span className="py-2">
               <p className="font-bold">Complaint Management Portal</p>
             </span>
-            {auth.role === "student" ? (
-              <div className="rounded-lg px-5 py-2 flex gap-5 border-2 border-white">
-                <NavLink
-                  to="/student/home"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-2 border-white"
-                      : "border-b-2 border-transparent"
-                  }
+            {auth?.role === "student" ? (
+              <div className="mb-3 rounded-lg px-5 max-sm:px-2 py-2 flex justify-between border-2 border-white">
+                <div className="flex gap-5 max-sm:gap-2">
+                  <NavLink
+                    to="/student/home"
+                    className={({ isActive }) =>
+                      `${
+                        isActive
+                          ? "border-b-2 border-white"
+                          : "border-b-2 border-transparent"
+                      }`
+                    }
+                  >
+                    Home
+                  </NavLink>
+                  <NavLink
+                    to="/student/profile"
+                    className={({ isActive }) =>
+                      `${
+                        isActive
+                          ? "border-b-2 border-white"
+                          : "border-b-2 border-transparent"
+                      }`
+                    }
+                  >
+                    Profile
+                  </NavLink>
+                  <NavLink
+                    to="/student/complaint"
+                    className={({ isActive }) =>
+                      `${
+                        isActive
+                          ? "border-b-2 border-white"
+                          : "border-b-2 border-transparent"
+                      }`
+                    }
+                  >
+                    Complaints
+                  </NavLink>
+                </div>
+                <div
+                  className="cursor-pointer flex justify-center items-center"
+                  onClick={logout}
                 >
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/student/profile"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-2 border-white"
-                      : "border-b-2 border-transparent"
-                  }
-                >
-                  Profile
-                </NavLink>
-                <NavLink
-                  to="/student/complaint"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-2 border-white"
-                      : "border-b-2 border-transparent"
-                  }
-                >
-                  Complaints
-                </NavLink>
+                  <FontAwesomeIcon
+                    icon={faRightFromBracket}
+                    className="sm:pr-2"
+                  />
+                  <p className="max-sm:hidden">Logout</p>
+                </div>
               </div>
-            ) : auth.role === "admin" ? (
-              <div className="rounded-lg px-5 py-2 flex gap-5 border-2 border-white">
-                <NavLink
-                  to="/admin/dashboard"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-2 border-white"
-                      : "border-b-2 border-transparent"
-                  }
+            ) : auth?.role === "admin" ? (
+              <div className="mb-3 rounded-lg px-5 max-sm:px-2 py-2 flex justify-between border-2 border-white">
+                <div className="flex gap-5 max-sm:gap-2">
+                  <NavLink
+                    to="/admin/dashboard"
+                    className={({ isActive }) =>
+                      `${
+                        isActive
+                          ? "border-b-2 border-white"
+                          : "border-b-2 border-transparent"
+                      }`
+                    }
+                  >
+                    Dashboard
+                  </NavLink>
+                  <NavLink
+                    to="/admin/complaints"
+                    className={({ isActive }) =>
+                      `${
+                        isActive
+                          ? "border-b-2 border-white"
+                          : "border-b-2 border-transparent"
+                      }`
+                    }
+                  >
+                    Manage Complaints
+                  </NavLink>
+                </div>
+                <div
+                  className="cursor-pointer flex justify-center items-center"
+                  onClick={logout}
                 >
-                  Dashboard
-                </NavLink>
-                <NavLink
-                  to="/admin/complaints"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-2 border-white"
-                      : "border-b-2 border-transparent"
-                  }
-                >
-                  Manage Complaints
-                </NavLink>
+                  <FontAwesomeIcon
+                    icon={faRightFromBracket}
+                    className="sm:pr-2"
+                  />
+                  <p className="max-sm:hidden">Logout</p>
+                </div>
               </div>
             ) : null}
           </div>
