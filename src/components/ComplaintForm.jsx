@@ -5,11 +5,10 @@ const ComplaintForm = () => {
     studentId: "",
     studentName: "",
     roomNumber: "",
+    hostelNumber: "",
     complaintType: "",
     description: "",
     dateReported: "",
-    status: "",
-    assignedTo: "",
     attachments: [],
   });
 
@@ -21,13 +20,14 @@ const ComplaintForm = () => {
     if (!formData.studentName)
       newErrors.studentName = "Student Name is required";
     if (!formData.roomNumber) newErrors.roomNumber = "Room Number is required";
+    if (!formData.hostelNumber)
+      newErrors.hostelNumber = "Hostel Number is required";
     if (!formData.complaintType)
       newErrors.complaintType = "Complaint Type is required";
     if (!formData.description)
       newErrors.description = "Description is required";
     if (!formData.dateReported)
       newErrors.dateReported = "Date Reported is required";
-    if (!formData.status) newErrors.status = "Status is required";
     return newErrors;
   };
 
@@ -80,6 +80,23 @@ const ComplaintForm = () => {
           />
           {errors.studentName && (
             <p className="text-red-500">{errors.studentName}</p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="studentName" className="block text-white">
+            Hostel Number
+          </label>
+          <input
+            type="text"
+            id="hostelNumber"
+            name="hostelNumber"
+            value={formData.hostelNumber}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.hostelNumber && (
+            <p className="text-red-500">{errors.hostelNumber}</p>
           )}
         </div>
 
@@ -164,41 +181,6 @@ const ComplaintForm = () => {
           {errors.dateReported && (
             <p className="text-red-500">{errors.dateReported}</p>
           )}
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="status" className="block text-white">
-            Status
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select status</option>
-            {["Pending", "Resolved"].map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-          {errors.status && <p className="text-red-500">{errors.status}</p>}
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="assignedTo" className="block text-white">
-            Assigned To
-          </label>
-          <input
-            type="text"
-            id="assignedTo"
-            name="assignedTo"
-            value={formData.assignedTo}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
         </div>
 
         <div className="mb-4">
