@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const LoginForm = () => {
-  const { login } = useAuth();
+  const { login,setIsLoading } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,6 +20,7 @@ const LoginForm = () => {
     }
 
     try {
+      setIsLoading(true);
       setError("");
       await login(username, password);
     } catch (err) {
@@ -28,7 +29,9 @@ const LoginForm = () => {
         setError("");
         setUsername("");
         setPassword("");
-      }, 4000);
+      }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
