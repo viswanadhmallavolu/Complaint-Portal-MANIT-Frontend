@@ -30,7 +30,11 @@ const Footer = () => {
             </p>
             <p>
               Web:{" "}
-              <a className="text-blue-300" href="www.manit.ac.in">
+              <a
+                className="text-blue-300"
+                href="https://www.manit.ac.in"
+                target="_blank"
+              >
                 {" "}
                 www.manit.ac.in
               </a>
@@ -39,24 +43,28 @@ const Footer = () => {
           <div className="flex justify-center items-center text-center max-sm:w-full flex-shrink space-x-4 mt-4 md:mt-0">
             <a
               href="https://www.facebook.com/people/MANIT-Bhopal/100057525636119/"
+              target="_blank"
               className="text-blue-500 text-lg  hover:text-blue-600"
             >
               <FontAwesomeIcon icon={faFacebookF} />
             </a>
             <a
               href="https://www.youtube.com/channel/UCXzZC99puUZuJDiQ09p72cw"
+              target="_blank"
               className="text-red-500  text-lg hover:text-red-600"
             >
               <FontAwesomeIcon icon={faYoutube} />
             </a>
             <a
               href="https://twitter.com/manitbpl"
+              target="_blank"
               className="text-blue-500 text-lg  hover:text-blue-600"
             >
               <FontAwesomeIcon icon={faTwitter} />
             </a>
             <a
               href="https://www.instagram.com/manitbhopl/"
+              target="_blank"
               className="text-red-500  text-lg hover:text-red-600"
             >
               <FontAwesomeIcon icon={faInstagram} />
