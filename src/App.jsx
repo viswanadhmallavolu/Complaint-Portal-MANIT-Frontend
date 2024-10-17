@@ -80,19 +80,20 @@ const AuthenticatedRoute = () => {
 };
 
 const RedirectBasedOnRole = () => {
-  const { auth } = useAuth();
+  const { auth,logout } = useAuth();
   if (!auth) return <Login />;
   if (auth?.role === "student") {
     return <Home />;
   } else if (auth?.role === "admin") {
     return <AdminDashboard />;
   } else {
+    logout();
     return <Login />;
   }
 };
 
 const ProtectedRoute = ({ role, children }) => {
-  const { auth, isLoading } = useAuth();
+  const { auth,logout, isLoading } = useAuth();
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-slate-300 font-bold text-gray-700">
@@ -102,9 +103,10 @@ const ProtectedRoute = ({ role, children }) => {
   }
 
   if (!auth || auth.role !== role) {
+    logout();
     return <Login />;
   }
-  
+
   return children;
 };
 

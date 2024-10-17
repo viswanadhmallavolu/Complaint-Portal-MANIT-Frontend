@@ -1,8 +1,10 @@
 import React from 'react'
-
+import ComplaintForm from '../../components/ComplaintForm'
 const Complaint = () => {
   return (
-    <div>Complaint</div>
+    <div>
+      <ComplaintForm/>
+    </div>
   )
 }
 

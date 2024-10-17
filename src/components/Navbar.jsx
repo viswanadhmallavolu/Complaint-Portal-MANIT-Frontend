@@ -50,11 +50,13 @@ const Navbar = () => {
       <div className="w-full bg-[#003366] text-white max-sm:text-sm">
         {/* Image Section */}
         <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 pt-3">
-          <img
-            src="/logo/MANIT-Logo.png"
-            alt="MANIT"
-            className="max-sm:w-full sm:w-[70%] lg:w-[50%]"
-          />
+          <a href="https://www.manit.ac.in/" target="_blank">
+            <img
+              src="/logo/MANIT-Logo.png"
+              alt="MANIT"
+              className="max-sm:w-full sm:w-[70%] lg:w-[50%]"
+            />
+          </a>
         </div>
       </div>
       <div
@@ -65,7 +67,7 @@ const Navbar = () => {
       >
         {/* Sticky Navbar Section */}
         <div className="bg-[#003366]">
-          <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 flex flex-col ga max-sm:gap-3">
+          <div className="max-w-[1200px] mx-auto px-8 max-sm:px-2 flex flex-col">
             <span className="py-2">
               <p className="font-bold">Complaint Management Portal</p>
             </span>
@@ -163,9 +165,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {/* {isFixed && (
+      {isFixed && (
         <div className="bg-[#1261A0]" style={{ height: "100px" }}></div>
-      )} */}
+      )}
     </div>
   );
 };
