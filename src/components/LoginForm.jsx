@@ -29,7 +29,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="lg:w-1/2 sm:w-[75%] w-full flex flex-col p-5 bg-white rounded-lg shadow-lg text-violet-500">
+    <div className="flex flex-col p-5 bg-white rounded-lg shadow-lg text-violet-500">
       <h1 className="my-6 text-3xl font-semibold text-center">Login</h1>
 
       <form onSubmit={handleSubmit}>
@@ -39,7 +39,7 @@ const LoginForm = () => {
             type="text"
             placeholder="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)} // Set the username
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div className="mb-6">
@@ -48,7 +48,7 @@ const LoginForm = () => {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)} // Set the password
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <button

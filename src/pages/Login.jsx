@@ -1,17 +1,37 @@
 import React from "react";
 import LoginForm from "../components/LoginForm";
+
 const Login = () => {
   return (
-    <div className="min-h-[50vw] p-8 w-full flex justify-center items-start">
-      <div className="w-full sm:mt-16 grid max-sm:grid-cols-1 grid-cols-2 max-sm:gap-5">
-        <div className="w-full text-center flex justify-center items-center flex-col gap-5 p-8 md:text-lg text-white font-semibold">
-          <h1 className="text-2xl">Welcome</h1>
-          <p>
-            Please Login using your <br /> LDAP ID and Password
-          </p>
-        </div>
-        <div className="flex">
-          <LoginForm></LoginForm>
+    <div className="bg-transparent px-8 py-3 w-full">
+      <div className="w-full text-center bg-black mb-5 p-2 rounded-lg text-white max-sm:text-sm">
+        <p>
+          Any Grievance sent by email will not be attended to / entertained.
+          Please lodge your grievance on this portal.
+        </p>
+      </div>
+      <div className="flex justify-center items-center">
+        <div className="bg-transparent rounded-lg overflow-hidden w-full max-w-4xl flex max-sm:flex-col-reverse">
+          <div className="w-1/2 max-sm:w-full p-8 max-md:p-2">
+            <LoginForm></LoginForm>
+          </div>
+          <div className="w-1/2 max-sm:w-full p-8 max-md:p-2 text-white flex flex-col justify-center">
+            <div>
+              <div className="flex justify-center mb-1">
+                <img
+                  src="/icons/login-rm.png"
+                  alt="Quiz Icons"
+                  className=" w-52 h-52"
+                />
+              </div>
+              <h2 className="text-2xl font-bold mb-2 text-center">
+                Welcome Back
+              </h2>
+              <p className="text-center">
+                Please Login <br /> using your LDAP ID and Password
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

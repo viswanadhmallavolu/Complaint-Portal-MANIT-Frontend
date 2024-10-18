@@ -71,28 +71,18 @@ const AuthenticatedRoute = () => {
 };
 
 const CatchAllRoutes = () => {
-  const { auth, isLoading, logout } = useAuth();
+  return <RedirectBasedOnRole />;
+};
 
+const RedirectBasedOnRole = () => {
+  const { auth, logout, isLoading } = useAuth();
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-slate-300 font-bold text-gray-700">
+      <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-transparent font-bold text-gray-700">
         <div>Loading...</div>
       </div>
     );
   }
-  if (!auth) return <Login />;
-  if (auth?.role === "student") {
-    return <Navigate to="/student/home" replace />;
-  } else if (auth?.role === "admin") {
-    return <Navigate to="/admin/dashboard" replace />;
-  } else {
-    logout();
-    return <Login />;
-  }
-};
-
-const RedirectBasedOnRole = () => {
-  const { auth,logout } = useAuth();
   if (!auth) return <Login />;
   if (auth?.role === "student") {
     return <Navigate to="/student/home" replace />;
@@ -108,13 +98,13 @@ const ProtectedRoute = ({ role, children }) => {
   const { auth,logout, isLoading } = useAuth();
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-slate-300 font-bold text-gray-700">
+      <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-transparent font-bold text-gray-700">
         <div>Loading...</div>
       </div>
     );
   }
 
-  if (!auth || auth.role !== role) {
+  if (!auth || auth?.role !== role) {
     logout();
     return <Login />;
   }

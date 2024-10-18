@@ -8,7 +8,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>
       <AuthProvider>
-        <div className="font-poppins bg-[#1261A0]">
+        <div className="font-poppins bg-[#1677c8]">
           <App />
         </div>
       </AuthProvider>

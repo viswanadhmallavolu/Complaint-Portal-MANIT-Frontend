@@ -40,14 +40,17 @@ const ComplaintForm = () => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
       console.log("Form Data Submitted: ", formData);
-      // Handle the form submission here (e.g., API call)
+
+      // Handle the form submission here
+
+      // API calls
     } else {
       setErrors(validationErrors);
     }
   };
 
   return (
-    <div className="p-8 bg-transparent shadow-md rounded-lg max-w-[1200px] mx-auto">
+    <div className="p-8 bg-transparent max-w-[1200px] mx-auto">
       <div className="gap-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">
         <div className="mb-4">
           <label htmlFor="studentId" className="block text-white">
