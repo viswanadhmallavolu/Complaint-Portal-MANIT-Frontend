@@ -108,7 +108,7 @@ const Navbar = () => {
                       }`
                     }
                   >
-                    Complaints
+                    Complain
                   </NavLink>
                 </div>
                 <div

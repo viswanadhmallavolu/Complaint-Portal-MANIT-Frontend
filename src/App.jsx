@@ -1,5 +1,5 @@
 import React from "react";
-import {Routes, Route,Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import Home from "./pages/students/Home";
 import Login from "./pages/Login";
@@ -7,6 +7,7 @@ import Profile from "./pages/students/Profile";
 import Complaint from "./pages/students/Complaint";
 import AdminDashboard from "./pages/admins/AdminDashboard";
 import AdminManageComplaints from "./pages/admins/AdminManageComplaints";
+import ComplaintListWithErrorBoundary from './pages/students/ComplaintListWithErrorBoundary';
 import { useAuth } from "./context/AuthContext";
 
 const App = () => {
@@ -40,6 +41,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/home/:category"
+          element={
+            <ProtectedRoute role="student">
+              <ComplaintListWithErrorBoundary />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin Routes */}
         <Route
@@ -59,8 +68,7 @@ const App = () => {
           }
         />
       </Route>
-      <Route path="/*"
-      element={<CatchAllRoutes/>}></Route>
+      <Route path="/*" element={<CatchAllRoutes />} />
     </Routes>
   );
 };
@@ -95,7 +103,7 @@ const RedirectBasedOnRole = () => {
 };
 
 const ProtectedRoute = ({ role, children }) => {
-  const { auth,logout, isLoading } = useAuth();
+  const { auth, logout, isLoading } = useAuth();
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-transparent font-bold text-gray-700">
