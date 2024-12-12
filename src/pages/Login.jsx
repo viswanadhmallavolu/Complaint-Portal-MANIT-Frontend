@@ -3,7 +3,7 @@ import LoginForm from "../components/LoginForm";
 
 const Login = () => {
   return (
-    <div className="bg-transparent px-8 pt-3 pb-8 w-full">
+    <div className="bg-[#1677c8] px-8 pt-3 pb-8 w-full">
       <div className="w-full text-center bg-black mb-5 p-2 rounded-lg text-white max-sm:text-sm">
         <p>
           Any Grievance sent by email will not be attended to / entertained.

@@ -6,7 +6,7 @@ import {
   Building,
   Stethoscope,
   Shield,
-  UserCheck, // Add this import for the new icon
+  UserCheck, 
 } from 'lucide-react';
 
 const cards = [
@@ -54,11 +54,11 @@ const cards = [
   },
 ];
 
-const Home = () => {
+const AdminManageComplaints = () => {
   const navigate = useNavigate();
 
   const handleCardClick = (title: string) => {
-    navigate(`/student/home/${title}`);
+    navigate(`/admin/complaints/${title}`);
   };
 
   return (
@@ -96,4 +96,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default AdminManageComplaints;

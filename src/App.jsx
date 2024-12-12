@@ -5,7 +5,7 @@ import Home from "./pages/students/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/students/Profile";
 import Complaint from "./pages/students/Complaint";
-import AdminDashboard from "./pages/admins/AdminDashboard";
+import AdminDashboard from "./pages/admins/AdminDashboard.tsx";
 import AdminManageComplaints from "./pages/admins/AdminManageComplaints";
 import ComplaintListWithErrorBoundary from './pages/students/ComplaintListWithErrorBoundary';
 import { useAuth } from "./context/AuthContext";
@@ -42,14 +42,15 @@ const App = () => {
           }
         />
         <Route
-          path="/home/:category"
+          path="/student/home/:category"
           element={
             <ProtectedRoute role="student">
               <ComplaintListWithErrorBoundary />
             </ProtectedRoute>
           }
         />
-
+        {/* Create the error page  */}
+        
         {/* Admin Routes */}
         <Route
           path="/admin/dashboard"
@@ -67,7 +68,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/complaints/:category"
+          element={
+            <ProtectedRoute role="admin">
+              <ComplaintListWithErrorBoundary />
+            </ProtectedRoute>
+          }
+        />
       </Route>
+      
       <Route path="/*" element={<CatchAllRoutes />} />
     </Routes>
   );
@@ -106,9 +116,10 @@ const ProtectedRoute = ({ role, children }) => {
   const { auth, logout, isLoading } = useAuth();
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center text-3xl bg-transparent font-bold text-gray-700">
-        <div>Loading...</div>
+      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
+
     );
   }
 

@@ -1,5 +1,37 @@
-export type ComplaintCategory = 'Hostel' | 'Academic' | 'Medical' | 'Infrastructure' | 'Ragging' | 'Anonymous';
+// Common types
+export type ComplaintCategory = 
+  | 'Hostel' 
+  | 'Academic' 
+  | 'Medical' 
+  | 'Infrastructure' 
+  | 'Ragging' 
+  | 'Administration' 
+  | 'Anonymous';
 
+export type ComplaintStatus = 'pending' | 'in-progress' | 'resolved';
+export enum ReadStatus {
+  NotViewed = 'Not viewed',
+  Viewed = 'Viewed'
+}
+
+// Academic types
+export type AcademicComplaintType = 
+  | 'Timetable'
+  | 'Course'
+  | 'Faculty'
+  | 'Other';
+
+export type Year = '1st' | '2nd' | '3rd' | '4th' | '5th';
+export type Stream = 
+  | "B.tech" 
+  | "M.tech" 
+  | "Phd" 
+  | "MCA" 
+  | "MBA" 
+  | "B.Arch" 
+  | "B.Plan";
+
+// Hostel types
 export type HostelComplaintType = 
   | 'maintenance'
   | 'hygiene'
@@ -8,20 +40,54 @@ export type HostelComplaintType =
   | 'bathroom'
   | 'room'
   | 'noise'
-  | 'other';
+  | 'Other';
 
+// Medical types
+export type MedicalComplaintType = 
+  | 'Doctor'
+  | 'Medicine'
+  | 'Ambulance'
+  | 'Other';
+
+// Infrastructure types
+export type InfrastructureComplaintType = 
+  | 'Electricity'
+  | 'Water'
+  | 'Internet'
+  | 'Bus'
+  | 'Classroom'
+  | 'Library'
+  | 'Sports'
+  | 'Lab'
+  | 'Other';
+
+// Administration types
+export type AdministrationComplaintType =
+  | 'Documents'
+  | 'Accounts'
+  | 'Scholarship'
+  | 'Details'
+  | 'Other';
+
+  interface Attachment {
+    url: string;
+  }
+
+// Base complaint interface
 interface BaseComplaint {
   id: string;
-  status: 'pending' | 'in-progress' | 'resolved';
+  status: ComplaintStatus;
   dateSubmitted: string;
-  attachments: string[];
+  attachments:  Attachment[];
   category: ComplaintCategory;
-  readStatus: 'Not viewed' | 'Viewed';
+  readStatus: ReadStatus;
+  description: string;
   roomNumber?: string;
   department?: string;
   landmark?: string;
 }
 
+// Specific complaint interfaces
 export interface HostelComplaint extends BaseComplaint {
   category: 'Hostel';
   scholarNumber: string;
@@ -29,7 +95,14 @@ export interface HostelComplaint extends BaseComplaint {
   hostelNumber: string;
   roomNumber: string;
   complaintType: HostelComplaintType;
-  description: string;
+}
+
+export interface AdministrationComplaint extends BaseComplaint {
+  category: 'Administration';
+  scholarNumber: string;
+  studentName: string;
+  department: string;
+  complaintType: AdministrationComplaintType;
 }
 
 export interface MedicalComplaint extends BaseComplaint {
@@ -37,7 +110,7 @@ export interface MedicalComplaint extends BaseComplaint {
   scholarNumber: string;
   studentName: string;
   department: string;
-  description: string;
+  complaintType: MedicalComplaintType;
 }
 
 export interface AcademicComplaint extends BaseComplaint {
@@ -45,7 +118,9 @@ export interface AcademicComplaint extends BaseComplaint {
   scholarNumber: string;
   studentName: string;
   department: string;
-  description: string;
+  complaintType: AcademicComplaintType;
+  year: Year;
+  stream: Stream;
 }
 
 export interface InfrastructureComplaint extends BaseComplaint {
@@ -53,36 +128,36 @@ export interface InfrastructureComplaint extends BaseComplaint {
   scholarNumber: string;
   studentName: string;
   landmark: string;
-  description: string;
+  complaintType: InfrastructureComplaintType;
 }
 
 export interface AnonymousComplaint extends BaseComplaint {
   category: 'Anonymous';
-  description: string;
 }
 
 export interface RaggingComplaint extends BaseComplaint {
   category: 'Ragging';
-  description: string;
   location?: string;
   involvedParties?: string;
 }
 
+// Union type for all complaints
 export type Complaint = 
   | HostelComplaint 
   | MedicalComplaint 
   | AcademicComplaint 
   | InfrastructureComplaint 
+  | AdministrationComplaint
   | AnonymousComplaint
   | RaggingComplaint;
 
+// Update and Delete interfaces
 export interface UpdateComplaint {
   complainId: string;
   roomNumber?: string;
-  updates: Partial<Complaint> 
+  updates: Partial<Complaint>;
 }
 
 export interface DeleteComplaint {
   complainId: string;
 }
-

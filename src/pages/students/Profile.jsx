@@ -1,40 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { User, Mail, Phone, Building2, Home, Building, Users, FileText, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext'; // Adjust the import path as necessary
+import {
+  User,
+  Mail,
+  Phone,
+  Building2,
+  Home,
+  Building,
+  Users,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Loader2,
+} from 'lucide-react';
+import { useAuth} from '../../context/AuthContext';
+import student_api from '../../api/student-api'
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
-  const { auth } = useAuth();
-  console.log(auth);
-  const [user] = useState(auth?.userData || null);
-  const [complaintData,setComplaintData] = useState(null);
+  const api = student_api;
+  const { auth, setAuth } = useAuth();
+  const user = auth?.userData || null;
+  const [complaintData, setComplaintData] = useState(null);
   const [loading, setLoading] = useState(!user);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/profile', { withCredentials: true });
-        console.log(response.data);
-        const complaintData = {
+        const response = await api.get('/profile');
+        setComplaintData({
           registered: response.data.registered,
           resolved: response.data.resolved,
-          unresolved: response.data.unresolved
-        };
-        setComplaintData(complaintData);
-
+          unresolved: response.data.unresolved,
+        });
       } catch (err) {
-        const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
-        setError(errorMessage);
+        if (err.response?.status === 401) {
+          setAuth(null);
+          localStorage.removeItem('auth');
+          navigate('/');
+        } else {
+          const errorMessage =
+            err.response?.data?.message || err.message || 'An error occurred';
+          setError(errorMessage);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-
-  }, []);
+  }, [api, navigate, setAuth]);
 
   if (loading) {
     return (
@@ -69,9 +85,7 @@ const Profile = () => {
                 <User className="w-12 h-12 text-blue-600" />
               </div>
               <div className="text-center sm:text-left">
-                <h1 className="text-2xl font-bold text-white">
-                  {user?.name}
-                </h1>
+                <h1 className="text-2xl font-bold text-white">{user?.name}</h1>
                 <p className="text-blue-100 mt-1">{user?.department}</p>
               </div>
             </div>
@@ -82,17 +96,25 @@ const Profile = () => {
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Personal Information
+                </h2>
                 <div className="space-y-4">
                   <InfoItem icon={Mail} label="Email" value={user?.email} />
                   <InfoItem icon={Phone} label="Mobile" value={user?.mobile} />
                   <InfoItem icon={User} label="UID" value={user?.uid} />
-                  <InfoItem icon={Building2} label="Department" value={user?.department} />
+                  <InfoItem
+                    icon={Building2}
+                    label="Department"
+                    value={`${user?.department}, ${user?.stream}`}
+                  />
                 </div>
               </div>
 
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-gray-900">Accommodation Details</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Accommodation Details
+                </h2>
                 <div className="space-y-4">
                   <InfoItem icon={Home} label="Room" value={user?.room} />
                   <InfoItem icon={Building} label="Hostel" value={user?.hostel} />
@@ -103,25 +125,30 @@ const Profile = () => {
 
             {/* Complaints Statistics */}
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Complaints Overview</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                Complaints Overview
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <StatCard
                   icon={FileText}
                   label="Registered"
                   value={complaintData?.registered}
                   color="blue"
+                  loading={!complaintData}
                 />
                 <StatCard
                   icon={CheckCircle}
                   label="Resolved"
                   value={complaintData?.resolved}
                   color="green"
+                  loading={!complaintData}
                 />
                 <StatCard
                   icon={XCircle}
                   label="Unresolved"
                   value={complaintData?.unresolved}
                   color="red"
+                  loading={!complaintData}
                 />
               </div>
             </div>
@@ -134,9 +161,7 @@ const Profile = () => {
 
 const InfoItem = ({ icon: Icon, label, value }) => (
   <div className="flex items-center space-x-3">
-    <div className="flex-shrink-0">
-      <Icon className="w-5 h-5 text-gray-400" />
-    </div>
+    <Icon className="w-5 h-5 text-gray-400" />
     <div>
       <p className="text-sm text-gray-500">{label}</p>
       <p className="text-gray-900">{value || '-'}</p>
@@ -144,7 +169,7 @@ const InfoItem = ({ icon: Icon, label, value }) => (
   </div>
 );
 
-const StatCard = ({ icon: Icon, label, value, color }) => {
+const StatCard = ({ icon: Icon, label, value, color, loading }) => {
   const colorClasses = {
     blue: 'bg-blue-50 text-blue-600',
     green: 'bg-green-50 text-green-600',
@@ -152,12 +177,20 @@ const StatCard = ({ icon: Icon, label, value, color }) => {
   };
 
   return (
-    <div className={`p-6 rounded-xl ${colorClasses[color]} bg-opacity-50`}>
+    <div
+      className={`p-6 rounded-xl ${colorClasses[color]} bg-opacity-50 relative overflow-hidden`}
+    >
       <div className="flex items-center space-x-3">
         <Icon className="w-6 h-6" />
         <h3 className="text-lg font-semibold">{label}</h3>
       </div>
-      <p className="mt-4 text-3xl font-bold">{value || 0}</p>
+      {loading ? (
+        <div className="mt-4 animate-pulse">
+          <div className="h-8 w-16 bg-current opacity-20 rounded"></div>
+        </div>
+      ) : (
+        <p className="mt-4 text-3xl font-bold">{value || 0}</p>
+      )}
     </div>
   );
 };

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const LoginForm = () => {
-  const { login,isLoading } = useAuth();
+  const { login, isLoading } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -19,7 +20,7 @@ const LoginForm = () => {
 
     try {
       setError("");
-      await login(username, password);
+      await login(username, password, isAdmin);
     } catch (err) {
       setError("Invalid credentials. Please try again.");
       setTimeout(() => {
@@ -40,6 +41,7 @@ const LoginForm = () => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
           />
         </div>
         <div className="mb-6">
@@ -49,19 +51,33 @@ const LoginForm = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
           />
+        </div>
+        <div className="mb-4 flex items-center">
+          <input
+            type="checkbox"
+            id="admin"
+            checked={isAdmin}
+            onChange={(e) => setIsAdmin(e.target.checked)}
+            className="mr-2"
+          />
+          <label htmlFor="admin" className="text-blue-500">Login as Admin</label>
         </div>
         <button
           type="submit"
           className="w-full py-2 mt-4 text-white bg-blue-500 rounded-sm hover:bg-blue-600 font-semibold transition-all"
         >
-          {isLoading?"LoggingIn...":"LogIn"}
+          {isLoading ? "Logging In..." : "Log In"}
         </button>
-        {error ? (
+        {error && (
           <div className="text-red-500 text-center mt-4">{error}</div>
-        ) : (
-          <div className="text-red-500 text-center mt-4"></div>
         )}
+        <div className="text-center mt-4">
+          <a href="https://userid.manit.ac.in/" className="text-blue-500 hover:underline" target="_blank">
+            Forgot Password?
+          </a>
+        </div>
       </form>
     </div>
   );
