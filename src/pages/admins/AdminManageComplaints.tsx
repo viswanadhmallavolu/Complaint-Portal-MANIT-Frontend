@@ -6,48 +6,48 @@ import {
   Building,
   Stethoscope,
   Shield,
-  UserCheck, 
+  UserCheck,
 } from 'lucide-react';
 
 const cards = [
   {
     title: 'Hostel',
-    description: 'Report hostel-related issues',
+    description: 'Resolve hostel-related issues',
     icon: Building2,
     color: 'text-orange-600',
     bg: 'bg-orange-50',
   },
   {
     title: 'Academic',
-    description: 'Submit academic-related concerns',
+    description: 'Resolve academic-related concerns',
     icon: GraduationCap,
     color: 'text-blue-600',
     bg: 'bg-blue-50',
   },
   {
     title: 'Infrastructure',
-    description: 'Report facility maintenance issues',
+    description: 'Resolve facility maintenance issues',
     icon: Building,
     color: 'text-purple-600',
     bg: 'bg-purple-50',
   },
   {
     title: 'Medical',
-    description: 'Submit health-related concerns',
+    description: 'Resolve health-related concerns',
     icon: Stethoscope,
     color: 'text-green-600',
     bg: 'bg-green-50',
   },
   {
     title: 'Ragging',
-    description: 'Report ragging incidents',
+    description: 'Resolve ragging incidents',
     icon: Shield,
     color: 'text-red-600',
     bg: 'bg-red-50',
   },
   {
     title: 'Administration',
-    description: 'Submit administration-related concerns',
+    description: 'Resolve administration-related concerns',
     icon: UserCheck,
     color: 'text-teal-600',
     bg: 'bg-teal-50',
@@ -72,15 +72,17 @@ const AdminManageComplaints = () => {
           return (
             <button
               key={index}
-              onClick={() => handleCardClick(card.title)}
-              className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 text-left border border-gray-100 hover:border-gray-200 relative overflow-hidden"
+              onClick={() => handleCardClick(card.title.toLowerCase())}
+              className="group bg-white rounded-xl shadow-lg hover:shadow-xl hover:shadow-blue-500/50 transition-all duration-200 p-6 text-left border border-gray-200 hover:border-gray-300 relative overflow-hidden"
             >
-              <div className={`${card.bg} absolute right-0 top-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110`} />
+              <div
+                className={`${card.bg} absolute right-0 top-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110`}
+              />
               <div className="relative">
                 <div className={`${card.color} mb-4`}>
                   <Icon size={32} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {card.title}
                 </h3>
                 <p className="text-gray-600">{card.description}</p>

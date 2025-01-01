@@ -1,0 +1,26 @@
+/* Modal.module.css */
+
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow-y: auto;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: black;
+  opacity: 0.5;
+}
+
+.modalContent {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+

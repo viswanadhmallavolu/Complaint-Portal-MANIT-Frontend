@@ -22,7 +22,10 @@ const statusConfig = {
 };
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
-  const config = statusConfig[status];
+  const config = statusConfig[status] || {
+    className: 'bg-gray-100 text-gray-800 border border-gray-200',
+    label: 'Unknown'
+  };
   
   return (
     <span className={`px-3 py-1 rounded-full text-sm font-medium ${config.className}`}>

@@ -25,6 +25,7 @@ export const NavLinks: React.FC<NavLinksProps> = ({ role }) => {
       <div className="flex gap-5 max-sm:gap-2">
         <NavLink to="/admin/dashboard" className={linkClass}>Dashboard</NavLink>
         <NavLink to="/admin/complaints" className={linkClass}>Complaints</NavLink>
+        <NavLink to="/admin/utils" className={linkClass}>Utils</NavLink>
       </div>
     );
   }

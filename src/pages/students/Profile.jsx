@@ -12,23 +12,23 @@ import {
   XCircle,
   Loader2,
 } from 'lucide-react';
-import { useAuth} from '../../context/AuthContext';
-import student_api from '../../api/student-api'
+import { useAuth } from '../../context/AuthContext';
+import student_api from '../../api/student-api';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
   const api = student_api;
-  const { auth, setAuth } = useAuth();
-  const user = auth?.userData || null;
+  const { auth } = useAuth();
+  const user = auth?.user || auth?.userData || null;  // Try both possible locations
   const [complaintData, setComplaintData] = useState(null);
   const [loading, setLoading] = useState(!user);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get('/profile');
+        const response = await api.get('/profile',{withCredentials: true});
         setComplaintData({
           registered: response.data.registered,
           resolved: response.data.resolved,
@@ -36,13 +36,15 @@ const Profile = () => {
         });
       } catch (err) {
         if (err.response?.status === 401) {
-          setAuth(null);
-          localStorage.removeItem('auth');
-          navigate('/');
+          if (typeof auth?.setAuth === 'function') {
+            auth.setAuth(null);
+            localStorage.removeItem('auth');
+            navigate('/');
+          }
         } else {
           const errorMessage =
             err.response?.data?.message || err.message || 'An error occurred';
-          setError(errorMessage);
+          toast.error(errorMessage);
         }
       } finally {
         setLoading(false);
@@ -50,7 +52,7 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, [api, navigate, setAuth]);
+  }, [api, navigate, auth]);
 
   if (loading) {
     return (
@@ -58,17 +60,6 @@ const Profile = () => {
         <div className="flex items-center space-x-2 text-blue-600">
           <Loader2 className="w-6 h-6 animate-spin" />
           <span className="text-lg font-medium">Loading profile...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg shadow-sm flex items-center space-x-2">
-          <XCircle className="w-5 h-5" />
-          <span>Error: {error}</span>
         </div>
       </div>
     );

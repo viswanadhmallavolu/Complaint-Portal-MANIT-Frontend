@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Logo } from './Logo';
-import { NavLinks } from './NavLinks';
+import {  NavLinks }  from './NavLinks';
 import { LogoutButton } from './LogoutButton';
 import { useNavbarScroll } from '../useNavbarScroll';
 

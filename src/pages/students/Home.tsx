@@ -73,7 +73,7 @@ const Home = () => {
             <button
               key={index}
               onClick={() => handleCardClick(card.title)}
-              className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 text-left border border-gray-100 hover:border-gray-200 relative overflow-hidden"
+              className="group bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.2),0_10px_20px_-2px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_-5px_rgba(0,0,255,0.3),0_10px_25px_-5px_rgba(0,0,255,0.2)] transition-all duration-200 p-6 text-left border border-gray-100 hover:border-gray-200 relative overflow-hidden"
             >
               <div className={`${card.bg} absolute right-0 top-0 w-32 h-32 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110`} />
               <div className="relative">

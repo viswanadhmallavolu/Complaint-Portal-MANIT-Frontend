@@ -29,7 +29,8 @@ export type Stream =
   | "MCA" 
   | "MBA" 
   | "B.Arch" 
-  | "B.Plan";
+  | "B.Plan"
+  | "Dual Degree";
 
 // Hostel types
 export type HostelComplaintType = 
@@ -80,11 +81,15 @@ interface BaseComplaint {
   dateSubmitted: string;
   attachments:  Attachment[];
   category: ComplaintCategory;
-  readStatus: ReadStatus;
+  readStatus: string;
   description: string;
-  roomNumber?: string;
+  roomNumber?: string ;
   department?: string;
   landmark?: string;
+  createdAt:Date;
+  AdminRemarks?:string;
+  resolvedAt?: Date; 
+  AdminAttachments?: string[]; 
 }
 
 // Specific complaint interfaces
@@ -103,6 +108,8 @@ export interface AdministrationComplaint extends BaseComplaint {
   studentName: string;
   department: string;
   complaintType: AdministrationComplaintType;
+  stream : Stream;
+  year : Year;
 }
 
 export interface MedicalComplaint extends BaseComplaint {
@@ -111,6 +118,8 @@ export interface MedicalComplaint extends BaseComplaint {
   studentName: string;
   department: string;
   complaintType: MedicalComplaintType;
+  stream : Stream;
+  year : Year;
 }
 
 export interface AcademicComplaint extends BaseComplaint {
@@ -129,6 +138,7 @@ export interface InfrastructureComplaint extends BaseComplaint {
   studentName: string;
   landmark: string;
   complaintType: InfrastructureComplaintType;
+  
 }
 
 export interface AnonymousComplaint extends BaseComplaint {
@@ -139,6 +149,9 @@ export interface RaggingComplaint extends BaseComplaint {
   category: 'Ragging';
   location?: string;
   involvedParties?: string;
+  scholarNumber: string;
+  stream : Stream;
+  year : Year;
 }
 
 // Union type for all complaints
@@ -156,8 +169,36 @@ export interface UpdateComplaint {
   complainId: string;
   roomNumber?: string;
   updates: Partial<Complaint>;
+  readStatus?: ReadStatus;
+  stream?:Stream;
+  year?:Year;
 }
 
 export interface DeleteComplaint {
   complainId: string;
 }
+
+export type HostelNumber = 
+| 'H1'
+| 'H2'
+| 'H3'
+| 'H4'
+| 'H5'
+| 'H6'
+| 'H7'
+| 'H8'
+| 'H9'
+| 'H10'
+| 'H11'
+| 'H12';
+
+export interface ComplaintFilters {
+    startDate: string;
+    endDate: string;
+    complaintType: string;
+    scholarNumbers: string[];
+    readStatus: string;
+    status: string ;
+    hostelNumber : HostelNumber | '';
+}
+

@@ -3,7 +3,7 @@ import { AlertCircle, Upload, Trash2 } from "lucide-react";
 import { useAuth } from '../context/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import  student_api   from "../api/student-api";
+import student_api from "../api/student-api";
 import { useNavigate } from "react-router-dom";
 
 const InputField = ({ label, name, value, onChange, error, type = "text", icon: Icon, readOnly = false }) => (
@@ -104,6 +104,7 @@ const TextareaField = ({ label, name, value, onChange, error, rows = 4 }) => (
 );
 
 const ComplaintForm = () => {
+
   const api = student_api;
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
@@ -117,7 +118,8 @@ const ComplaintForm = () => {
     complainType: "",
     complainDescription: "",
     landmark: "",
-    stream: user?.stream,
+    stream: user?.stream || "",
+    year: "",
     attachments: [],
   }), [user]);
 
@@ -215,18 +217,23 @@ const ComplaintForm = () => {
       if (!formData.complainType) newErrors.complainType = "Complaint type is required";
     }
 
+    if (["Academic", "Administration", "Medical", "Ragging"].includes(category)) {
+      if (!formData.stream) newErrors.stream = "Stream is required";
+      if (!formData.year) newErrors.year = "Year is required";
+    }
+
     return newErrors;
   }, [category, formData]);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
-  
+    
     if (Object.keys(validationErrors).length === 0) {
       setIsSubmitting(true);
       try {
         toast.info("Submitting complaint...");
-  
+
         const formDataToSend = new FormData();
         Object.keys(formData).forEach(key => {
           if (key === "attachments" && formData.attachments.length > 0) {
@@ -238,15 +245,15 @@ const ComplaintForm = () => {
           }
         });
         formDataToSend.append("category", category);
-  
+        console.log("This is the form data : ", formDataToSend);
         const response = await api.post(`/complain/register/${category}`, formDataToSend, {
           headers: {
             "Content-Type": "multipart/form-data",
-            "csrf-Token": csrfToken  
+            "csrf-Token": csrfToken
           },
           withCredentials: true,
         });
-  
+
         if (response.data) {
           toast.success("Complaint submitted successfully!");
           uploadedFiles.forEach(file => {
@@ -274,23 +281,72 @@ const ComplaintForm = () => {
     }
   }, [category, csrfToken, formData, initialFormData, uploadedFiles, validateForm, setAuth, navigate]);
 
+  const getYearOptions = useCallback((stream) => {
+    switch (stream) {
+      case "B.tech":
+      case "B.Plan":
+        return ["1st", "2nd", "3rd", "4th"];
+      case "B.Arch":
+      case "Dual Degree":
+        return ["1st", "2nd", "3rd", "4th", "5th"];
+      case "M.tech":
+      case "MBA":
+      case "MCA":
+        return ["1st", "2nd"];
+      case "Phd":
+        return [];
+      default:
+        return [];
+    }
+  }, []);
+
   const renderCategorySpecificFields = useCallback(() => {
-    const fields = {
-      Hostel: (
-        <>
-          <InputField
-            label="Hostel Number"
-            name="hostelNumber"
-            value={formData.hostelNumber}
+    const commonEducationFields = (
+      <>
+        <SelectField
+          label="Stream"
+          name="stream"
+          value={formData.stream}
+          onChange={(e) => {
+            handleChange(e);
+            setFormData(prev => ({ ...prev, year: "" }));
+          }}
+          options={[
+            "B.tech",
+            "M.tech",
+            "Phd",
+            "MCA",
+            "MBA",
+            "B.Arch",
+            "B.Plan",
+            "Dual Degree"
+          ]}
+          error={errors.stream}
+        />
+        {formData.stream !== "Phd" && (
+          <SelectField
+            label="Year"
+            name="year"
+            value={formData.year}
             onChange={handleChange}
-            error={errors.hostelNumber}
+            options={getYearOptions(formData.stream)}
+            error={errors.year}
           />
+        )}
+      </>
+    );
+
+    const fields = {
+      Academic: (
+        <>
+          {commonEducationFields}
           <InputField
-            label="Room Number"
-            name="room"
-            value={formData.room}
+            label="Department"
+            name="department"
+            value={formData.department}
             onChange={handleChange}
-            error={errors.room}
+            error={errors.department}
+            readOnly={true}
           />
           <SelectField
             label="Complaint Type"
@@ -298,13 +354,9 @@ const ComplaintForm = () => {
             value={formData.complainType}
             onChange={handleChange}
             options={[
-              "Maintenance",
-              "Hygiene",
-              "Security",
-              "Mess",
-              "Bathroom",
-              "Room",
-              "Noise",
+              "Timetable",
+              "Course",
+              "Faculty",
               "Other",
             ]}
             error={errors.complainType}
@@ -313,6 +365,7 @@ const ComplaintForm = () => {
       ),
       Medical: (
         <>
+          {commonEducationFields}
           <InputField
             label="Department"
             name="department"
@@ -335,8 +388,9 @@ const ComplaintForm = () => {
           />
         </>
       ),
-      Academic: (
+      Administration: (
         <>
+          {commonEducationFields}
           <InputField
             label="Department"
             name="department"
@@ -351,9 +405,65 @@ const ComplaintForm = () => {
             value={formData.complainType}
             onChange={handleChange}
             options={[
-              "Timetable",
-              "Course",
-              "Faculty",
+              "Documents",
+              "Accounts",
+              "Scholarship",
+              "Details",
+              "Other",
+            ]}
+            error={errors.complainType}
+          />
+        </>
+      ),
+      Ragging: (
+        <>
+          {commonEducationFields}
+          <InputField
+            label="Location"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            error={errors.location}
+          />
+          <InputField
+            label="Involved Parties"
+            name="involvedParties"
+            value={formData.involvedParties}
+            onChange={handleChange}
+            error={errors.involvedParties}
+          />
+        </>
+      ),
+      Hostel: (
+        <>
+          <SelectField
+            label="Hostel Number"
+            name="hostelNumber"
+            value={formData.hostelNumber}
+            onChange={handleChange}
+            options={["H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8", "H9", "H10", "H11", "H12"]}
+            error={errors.hostelNumber}
+          />
+          <InputField
+            label="Room Number"
+            name="room"
+            value={formData.room}
+            onChange={handleChange}
+            error={errors.room}
+          />
+          <SelectField
+            label="Complaint Type"
+            name="complainType"
+            value={formData.complainType}
+            onChange={handleChange}
+            options={[
+              "Maintenance",
+              "Hygiene",
+              "Security",
+              "Mess",
+              "Bathroom",
+              "Room",
+              "Noise",
               "Other",
             ]}
             error={errors.complainType}
@@ -389,36 +499,10 @@ const ComplaintForm = () => {
           />
         </>
       ),
-      Administration: (
-        <>
-          <InputField
-            label="Department"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            error={errors.department}
-            readOnly={true}
-          />
-          <SelectField
-            label="Complaint Type"
-            name="complainType"
-            value={formData.complainType}
-            onChange={handleChange}
-            options={[
-              "Documents",
-              "Accounts",
-              "Scholarship",
-              "Details",
-              "Other",
-            ]}
-            error={errors.complainType}
-          />
-        </>
-      ),
     };
 
     return fields[category] || null;
-  }, [category, formData, handleChange, errors]);
+  }, [category, formData, handleChange, errors, getYearOptions]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
