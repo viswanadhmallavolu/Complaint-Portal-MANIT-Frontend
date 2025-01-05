@@ -3,11 +3,11 @@ import React, { useState, memo } from 'react';
 import { Calendar, MessageSquare } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { Complaint, ReadStatus } from '../../types/complaint';
-import { StatusBadge } from './StatusBadge';
-import { ComplaintDetails } from './ComplaintDetails';
-import { AttachmentGallery } from './AttachmentGallery';
-import { RemarksModal } from '../RemarksModal/RemarksModal';
+import { Complaint, ReadStatus } from '../../../types/complaint';
+import { StatusBadge } from '../StatusBadge';
+import { ComplaintDetails } from '../ComplaintDetails';
+import { AttachmentGallery } from '../AttachmentGallery';
+import { RemarksModal } from './RemarksModal';
 
 interface ComplaintCardProps {
   complaint: Complaint;

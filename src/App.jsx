@@ -9,12 +9,15 @@ import AdminDashboard from "./pages/admins/AdminDashboard.tsx";
 import AdminManageComplaints from "./pages/admins/AdminManageComplaints";
 import ComplaintListWithErrorBoundary from './pages/students/ComplaintListWithErrorBoundary';
 import ComplaintListAdmin from './pages/admins/ComplaintListAdmin.tsx'
+import Feedback from "./pages/students/Feedback.tsx";
 import Utils from "./pages/admins/Util.tsx";
 import { useAuth } from "./context/AuthContext";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';  // Add this import
+import SearchPage from "./pages/students/Search.tsx";
+import Contacts from "./pages/students/Contacts.tsx";
 
 const App = () => {
   const location = useLocation();
@@ -74,7 +77,34 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          
+
+          <Route
+            path="/student/feedback"
+            element={
+              <ProtectedRoute role="student">
+                <Feedback />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/student/search"
+            element={
+              <ProtectedRoute role="student">
+                <SearchPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/student/contacts"
+            element={
+              <ProtectedRoute role="student">
+                <Contacts/>
+              </ProtectedRoute>
+            }
+          />
+
 
           {/* Admin Routes */}
           <Route

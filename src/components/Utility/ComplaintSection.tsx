@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Search, Info } from 'lucide-react';
 import { ComplaintDetails } from '../ComplaintCard/ComplaintDetails';
-import ComplaintCard from '../ComplaintCard/ComplaintCard';
+
 import { COMPLAINT_CATEGORIES } from '../../constants/categories';
 
 interface ComplaintSectionProps {

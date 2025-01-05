@@ -1,8 +1,9 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
 import { toast } from "react-toastify";
 
 const admin_api = axios.create({
-    baseURL: 'http://localhost:4000/',
+    baseURL: import.meta.env.VITE_ADMIN_API as string,
     withCredentials: true
 });
 

@@ -1,4 +1,6 @@
-export const SOCKET_URL = 'ws://localhost:4000';
+/// <reference types="vite/client" />
+
+export const SOCKET_URL = import.meta.env.VITE_ADMIN_API as string;
 export const SOCKET_CONFIG = {
   maxReconnectAttempts: 5,
   reconnectDelay: 1000,

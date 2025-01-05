@@ -253,6 +253,11 @@ export const deleteComplaints = async (
 	}
 };
 
+export const searchComplaint=async (id:string,category:string) :Promise<Complaint>=>{
+	const response=await student_api.get(`/complain/search/${category.toLowerCase()}?complainId=${id}`)
+	return mapComplaint(response.data.complaint);
+}
+
 export const getComplaintsByDateRange = async (
 	category: ComplaintCategory,
 	startDate: string,

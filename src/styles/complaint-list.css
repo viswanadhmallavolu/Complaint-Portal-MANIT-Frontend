@@ -1,0 +1,20 @@
+.list-container {
+  padding: 1rem 0;
+  position: relative;
+}
+
+.complaint-row {
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.complaint-row:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 640px) {
+  .complaint-row {
+    margin-bottom: 2rem;
+  }
+}

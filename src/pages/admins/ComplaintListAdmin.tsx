@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, Search, Trash2 } from 'lucide-react';
-import ComplaintCard from '../../components/ComplaintCard/ComplaintCard-admin';
-import { getComplaintsByDateRange_Admin, updateComplaintStatusAdmin, getComplaintStatistics_CategoryWise ,updateComplaintRemarksAdmin} from '../../services/apiService';
+import ComplaintCard from '../../components/ComplaintCard/admin/ComplaintCard-admin';
+import { getComplaintsByDateRange_Admin, updateComplaintStatusAdmin, getComplaintStatistics_CategoryWise, updateComplaintRemarksAdmin } from '../../services/apiService';
 import { Complaint, ComplaintCategory, ReadStatus, ComplaintFilters } from '../../types/complaint';
 import ComplaintHeader from '../../components/ComplaintHeader';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import Cookies from 'js-cookie';
 import { VariableSizeList as List } from 'react-window';
-import { calculateItemHeight } from './heightCalculator';
-import { useSocket } from '../../hooks/useSocket';
+import { calculateItemHeight } from '../../components/Utility/heightCalculator';
+
 import { toast } from 'react-toastify';
 import ReactMemo from 'react';
 
 const ComplaintList = () => {
     const { category } = useParams<{ category: string }>();
     const navigate = useNavigate();
-    // const {categoryStats} = useSocket('http://localhost:4000');
+    
 
     const isDefaultFilters = () => {
         const defaultFilters: ComplaintFilters = {
@@ -113,9 +113,9 @@ const ComplaintList = () => {
 
     const fetchComplaints = useCallback(async () => {
         if (!category || loading || !hasMore) return;
-        
+
         setLoading(true);
-        
+
         try {
             const { complaints: newComplaints, nextLastSeenId } = await getComplaintsByDateRange_Admin(
                 category.toLowerCase() as ComplaintCategory,
@@ -125,11 +125,11 @@ const ComplaintList = () => {
                 lastSeenId || '',
                 filters
             );
-            
+
             setComplaints(prev => lastSeenId ? [...prev, ...newComplaints] : newComplaints);
             setLastSeenId(nextLastSeenId);
             setHasMore(!!nextLastSeenId);
-            
+
             localStorage.setItem('complaints', JSON.stringify(newComplaints));
             localStorage.setItem('lastSeenId', nextLastSeenId || '');
         } catch (err) {
@@ -143,7 +143,7 @@ const ComplaintList = () => {
     useEffect(() => {
         fetchStatistics();
     }, [fetchStatistics]);
-    
+
     // useEffect(() => {
     //     if(categoryStats !== null) {
     //         setStatistics(categoryStats);
@@ -156,14 +156,14 @@ const ComplaintList = () => {
             setLastSeenId(null);
             setHasMore(true);
             setExpandedItems(new Set());
-            
+
             localStorage.removeItem('complaints');
             localStorage.removeItem('lastSeenId');
-            
+
             const timer = setTimeout(() => {
                 fetchComplaints();
             }, 100);
-            
+
             return () => {
                 clearTimeout(timer);
                 setLoading(false);
@@ -192,10 +192,10 @@ const ComplaintList = () => {
         }
     }, [category, handleError]);
 
-    const handleRemarksUpdate = useCallback(async (complaintId: string,AdminRemarks : any,AdminAttachments: any) => {
+    const handleRemarksUpdate = useCallback(async (complaintId: string, AdminRemarks: any, AdminAttachments: any) => {
         try {
             if (category) {
-                await updateComplaintRemarksAdmin(category, complaintId,AdminRemarks, AdminAttachments);
+                await updateComplaintRemarksAdmin(category, complaintId, AdminRemarks, AdminAttachments);
             }
             setComplaints(prev =>
                 prev.map(c => c.id === complaintId ? { ...c, AdminRemarks, AdminAttachments } as Complaint : c)
@@ -216,7 +216,7 @@ const ComplaintList = () => {
         localStorage.setItem('complaintFilters', JSON.stringify(filters));
         localStorage.removeItem('lastSeenId');
         localStorage.removeItem('complaints');
-        
+
         setLoading(true);
         try {
             const { complaints: newComplaints, nextLastSeenId } = await getComplaintsByDateRange_Admin(
@@ -230,7 +230,7 @@ const ComplaintList = () => {
             setComplaints(newComplaints);
             setLastSeenId(nextLastSeenId);
             setHasMore(!!nextLastSeenId);
-            
+
             localStorage.setItem('complaints', JSON.stringify(newComplaints));
             if (nextLastSeenId) {
                 localStorage.setItem('lastSeenId', nextLastSeenId);
@@ -256,11 +256,11 @@ const ComplaintList = () => {
         setComplaints([]);
         setLastSeenId(null);
         setHasMore(true);
-        
+
         localStorage.removeItem('complaintFilters');
         localStorage.removeItem('lastSeenId');
         localStorage.removeItem('complaints');
-        
+
         fetchComplaints();
     }, [fetchComplaints]);
 
@@ -306,7 +306,7 @@ const ComplaintList = () => {
         if (!complaint) return 0;
 
         const hasAttachments = Boolean(
-            (complaint.attachments && complaint.attachments.length > 0) || 
+            (complaint.attachments && complaint.attachments.length > 0) ||
             (complaint.AdminAttachments && complaint.AdminAttachments.length > 0)
         );
 
@@ -333,85 +333,83 @@ const ComplaintList = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 md:p-8">
-        <div className="max-w-7xl mx-auto">
-            <ComplaintHeader
-                category={category || ''}
-                loading={loading}
-                isFilterOpen={isFilterOpen}
-                statistics={memoizedStatistics}
-                onBackClick={handleBackToCategories}
-                onFilterClick={() => setIsFilterOpen(prev => !prev)}
-                filters={filters}
-                onFilterUpdate={handleFilterUpdate}
-                onApplyFilters={handleApplyFilters}
-                setStatistics={setStatistics} 
-            />
+            <div className="max-w-7xl mx-auto">
+                <ComplaintHeader
+                    category={category || ''}
+                    loading={loading}
+                    isFilterOpen={isFilterOpen}
+                    statistics={memoizedStatistics}
+                    onBackClick={handleBackToCategories}
+                    onFilterClick={() => setIsFilterOpen(prev => !prev)}
+                    filters={filters}
+                    onFilterUpdate={handleFilterUpdate}
+                    onApplyFilters={handleApplyFilters}
+                    setStatistics={setStatistics}
+                />
 
-            {complaints.length === 0 ? (
-                <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
-                    <div className="max-w-md mx-auto">
-                        <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-600 text-lg">No complaints found in this category.</p>
+                {complaints.length === 0 ? (
+                    <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+                        <div className="max-w-md mx-auto">
+                            <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+                            <p className="text-gray-600 text-lg">No complaints found in this category.</p>
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <div className="h-[calc(100vh-200px)]">
-                    <List
-                        ref={listRef}
-                        height={window.innerHeight - 200}
-                        itemCount={hasMore ? complaints.length + 1 : complaints.length}
-                        itemSize={getItemSize}
-                        width="100%"
-                        onItemsRendered={handleItemsRendered}
-                        className="space-y-8" // Increased spacing between items
-                        overscanCount={5}
-                    >
-                        {({ index, style }) => {
-                            if (index >= complaints.length) {
+                ) : (
+                    <div className="h-[calc(100vh-200px)]">
+                        <List
+                            ref={listRef}
+                            height={window.innerHeight - 200}
+                            itemCount={hasMore ? complaints.length + 1 : complaints.length}
+                            itemSize={getItemSize}
+                            width="100%"
+                            onItemsRendered={handleItemsRendered}
+                            className="space-y-8" // Increased spacing between items
+                            overscanCount={5}
+                        >
+                            {({ index, style }) => {
+                                if (index >= complaints.length) {
+                                    return (
+                                        <div style={style} key="loading">
+                                            <div className="flex justify-center items-center h-16">
+                                                {loading ? (
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                                                ) : (
+                                                    <p className="text-gray-500">No more complaints.</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                const complaint = complaints[index];
                                 return (
-                                    <div style={style} key="loading">
-                                        <div className="flex justify-center items-center h-16">
-                                            {loading ? (
-                                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                                            ) : (
-                                                <p className="text-gray-500">No more complaints.</p>
-                                            )}
+                                    <div
+                                        style={{
+                                            ...style,
+                                            paddingTop: '16px',
+                                            paddingBottom: '32px', // Increased bottom padding
+                                            height: 'auto', // Allow content to determine height
+                                            maxHeight: style.height as number - 48, // Subtract padding
+                                            transition: 'all 0.3s ease'
+                                        }}
+                                        key={complaint.id}
+                                        className="relative"
+                                    >
+                                        <div className="h-full">
+                                            <ComplaintCard
+                                                complaint={complaint}
+                                                onUpdate={handleStatusUpdate}
+                                                onRemarksUpdate={handleRemarksUpdate}
+                                            />
                                         </div>
                                     </div>
                                 );
-                            }
-
-                            const complaint = complaints[index];
-                            return (
-                                <div 
-                                    style={{
-                                        ...style,
-                                        paddingTop: '16px',
-                                        paddingBottom: '32px', // Increased bottom padding
-                                        height: 'auto', // Allow content to determine height
-                                        maxHeight: style.height as number - 48, // Subtract padding
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                    key={complaint.id}
-                                    className="relative"
-                                >
-                                    <div className="h-full">
-                                        <ComplaintCard
-                                            complaint={complaint}
-                                            onUpdate={handleStatusUpdate}
-                                            expanded={expandedItems.has(complaint.id)}
-                                            onToggleExpand={() => toggleExpand(index, complaint.id)}
-                                            onRemarksUpdate={handleRemarksUpdate}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        }}
-                    </List>
-                </div>
-            )}
+                            }}
+                        </List>
+                    </div>
+                )}
+            </div>
         </div>
-    </div>
     );
 };
 

@@ -1,8 +1,9 @@
+/// <reference types="vite/client" />
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
-import student_api from '../../api/student-api';
 
-const student_api_base_url = student_api.defaults.baseURL;
+
+const student_api_base_url = import.meta.env.VITE_STUDENT_API as string;
 
 interface Attachment {
   url: string;
@@ -14,7 +15,8 @@ interface AttachmentGalleryProps {
 }
 
 export const AttachmentGallery: React.FC<AttachmentGalleryProps> = ({ attachments, adminAttachments }) => {
-  if (!attachments?.length && !adminAttachments?.length) return null;
+  // Check if both arrays are empty or undefined/null
+  if (!attachments?.length && !adminAttachments?.filter(Boolean)?.length) return null;
 
   const openImage = (url: string) => {
     if (typeof url !== 'string') {

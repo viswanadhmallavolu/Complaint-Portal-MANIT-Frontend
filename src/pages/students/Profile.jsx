@@ -11,6 +11,8 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
+  Stethoscope,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import student_api from '../../api/student-api';
@@ -33,6 +35,12 @@ const Profile = () => {
           registered: response.data.registered,
           resolved: response.data.resolved,
           unresolved: response.data.unresolved,
+          hostel:response.data.hostel,
+          academic:response.data.academic,
+          medical:response.data.medical,
+          ragging:response.data.ragging,
+          infrastructure:response.data.infrastructure,
+          administration:response.data.administration,
         });
       } catch (err) {
         if (err.response?.status === 401) {
@@ -119,7 +127,7 @@ const Profile = () => {
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
                 Complaints Overview
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <StatCard
                   icon={FileText}
                   label="Registered"
@@ -139,6 +147,54 @@ const Profile = () => {
                   label="Unresolved"
                   value={complaintData?.unresolved}
                   color="red"
+                  loading={!complaintData}
+                />
+              </div>
+              
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Complaints by Category
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <StatCard
+                  icon={Building}
+                  label="Hostel"
+                  value={complaintData?.hostel}
+                  color="blue"
+                  loading={!complaintData}
+                />
+                <StatCard
+                  icon={FileText}
+                  label="Academic"
+                  value={complaintData?.academic}
+                  color="blue"
+                  loading={!complaintData}
+                />
+                <StatCard
+                  icon={Stethoscope}
+                  label="Medical"
+                  value={complaintData?.medical}
+                  color="blue"
+                  loading={!complaintData}
+                />
+                <StatCard
+                  icon={Users}
+                  label="Ragging"
+                  value={complaintData?.ragging}
+                  color="blue"
+                  loading={!complaintData}
+                />
+                <StatCard
+                  icon={Building2}
+                  label="Infrastructure"
+                  value={complaintData?.infrastructure}
+                  color="blue"
+                  loading={!complaintData}
+                />
+                <StatCard
+                  icon={ClipboardList}
+                  label="Administration"
+                  value={complaintData?.administration}
+                  color="blue"
                   loading={!complaintData}
                 />
               </div>

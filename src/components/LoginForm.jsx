@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginForm = () => {
   const { login, isLoading } = useAuth();
@@ -7,6 +8,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,51 +32,62 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex flex-col p-5 bg-white rounded-lg shadow-lg text-violet-500">
-      <h1 className="my-6 text-3xl font-semibold text-center">Login</h1>
+    <div className="flex flex-col p-8 rounded-xl shadow-xl bg-white/10 backdrop-blur-md backdrop-filter border border-white/20 text-violet-500">
+      <h1 className="my-6 text-3xl font-semibold text-center text-white">Login</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="relative group">
           <input
-            className="w-full py-2 text-blue-500 bg-transparent border-b-2 border-blue-500 focus:outline-none focus:border-blue-500 placeholder-violet-400 px-2"
+            className="w-full py-3 px-4 text-white bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:border-blue-500 placeholder-white/50 backdrop-blur-sm transition-all"
             type="text"
-            placeholder="Username"
+            placeholder="Scholar Number"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
+            autoComplete="scholar-number"
           />
         </div>
-        <div className="mb-6">
+        <div className="relative group">
           <input
-            className="w-full py-2 text-blue-500 bg-transparent border-b-2 border-blue-500 focus:outline-none focus:border-blue-500 placeholder-violet-400 px-2"
-            type="password"
+            className="w-full py-3 px-4 text-white bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:border-blue-500 placeholder-white/50 backdrop-blur-sm transition-all"
+            type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white focus:outline-none transition-colors"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
-        <div className="mb-4 flex items-center">
+        <div className="flex items-center">
           <input
             type="checkbox"
             id="admin"
             checked={isAdmin}
             onChange={(e) => setIsAdmin(e.target.checked)}
-            className="mr-2"
+            className="mr-2 rounded border-white/20 bg-white/5"
           />
-          <label htmlFor="admin" className="text-blue-500">Login as Admin</label>
+          <label htmlFor="admin" className="text-white/90">Login as Admin</label>
         </div>
         <button
           type="submit"
-          className="w-full py-2 mt-4 text-white bg-blue-500 rounded-sm hover:bg-blue-600 font-semibold transition-all"
+          className="w-full py-3 text-white bg-blue-600/80 hover:bg-blue-400/80 rounded-lg backdrop-blur-sm font-semibold transition-all"
         >
           {isLoading ? "Logging In..." : "Log In"}
         </button>
         {error && (
-          <div className="text-red-500 text-center mt-4">{error}</div>
+          <div className="text-red-400 text-center">{error}</div>
         )}
-        <div className="text-center mt-4">
-          <a href="https://userid.manit.ac.in/" className="text-blue-500 hover:underline" target="_blank">
+        <div className="text-center">
+          <a 
+            href="https://userid.manit.ac.in/" 
+            className="text-white/90 hover:text-white transition-colors" 
+            target="_blank"
+          >
             Forgot Password?
           </a>
         </div>

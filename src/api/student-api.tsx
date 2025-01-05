@@ -1,8 +1,9 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const student_api = axios.create({
-    baseURL: 'http://localhost:5000/',
+    baseURL: import.meta.env.VITE_STUDENT_API as string,
     withCredentials: true
 });
 
@@ -10,13 +11,44 @@ student_api.interceptors.response.use(
     response => response,
     error => {
         if (error.response) {
-            const { status, data } = error.response;
-            
+            const { status, data, message } = error.response;
+            const { expired } = data;
+
+            // Handle token not found
+            if (status === 401 && data.message === 'Token not found') {
+                localStorage.clear();
+                toast.error('Session ended. Please login again.', {
+                    toastId: 'token-not-found',
+                    onClose: () => window.location.href = '/'
+                });
+                return Promise.reject(error);
+            }
+
+            // Handle invalid/expired token
+            if (status === 401 && data.message === 'User is not authenticated') {
+                localStorage.clear();
+                toast.error('Session Expired. Please login again.', {
+                    toastId: 'invalid-token',
+                    onClose: () => window.location.href = '/'
+                });
+                return Promise.reject(error);
+            }
+
             // Handle authentication errors
-            if (status === 401) {
+            if (status === 401 && expired) {
+                console.error("Session Exipred. Please Login Again");
                 localStorage.clear();
                 toast.error('Your session has expired. Please login again.', {
-                    toastId: 'auth-error', // Prevent duplicate toasts
+                    toastId: 'session-expired', 
+                    onClose: () => window.location.href = '/'
+                });
+                return Promise.reject(error);
+            }
+
+            if (status === 401 && expired===null) {
+                localStorage.clear();
+                toast.error('Unauthorized', {
+                    toastId: 'session-expired', 
                     onClose: () => window.location.href = '/'
                 });
                 return Promise.reject(error);

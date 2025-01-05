@@ -13,43 +13,38 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const getApi = (isAdmin) => {
-    const port = isAdmin ? '3500' : '5000';
+    
     const api = isAdmin ? admin_api : student_api;
-    api.defaults.baseURL = `http://localhost:${port}`;
     return api;
   };
 
   useEffect(() => {
     const validateAuth = async () => {
       const storedAuth = localStorage.getItem("auth");
-    
       if (storedAuth) {
         try {
           const parsedAuth = JSON.parse(storedAuth);
           const isAdmin = parsedAuth?.role === 'admin';
           const api = getApi(isAdmin);
           
-          const response = await api.get('/validate', { 
-            withCredentials: true,
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-          });
+          const response = await api.get('/validate');
 
-          // More specific success check
-          if (response.data && (response.data.message === 'success' || response.data.success)) {
+          if (response.data && response.data.status === 'success') {
             setAuth(parsedAuth);
           } else {
-            console.log('Validation response:', response.data);
             throw new Error('Invalid validation response');
           }
         } catch (error) {
-          console.error('Validation error details:', error);
-          // Don't clear auth on network errors
-          if (error.response?.status === 401 || error.message === 'Invalid validation response') {
+          console.error('Validation error:', error);
+          
+          // Clear auth state for all 401 errors
+          if (error.response?.status === 401) {
             localStorage.removeItem("auth");
             setAuth(null);
+            
+            // Show specific error messages based on the error
+            const errorMessage = error.response?.data?.message;
+            
           }
         }
       }

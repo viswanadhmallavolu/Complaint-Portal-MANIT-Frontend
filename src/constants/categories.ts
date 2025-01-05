@@ -7,4 +7,4 @@ export const COMPLAINT_CATEGORIES = [
     'Infrastructure'
   ] as const;
   
-  export type ComplaintCategory = typeof COMPLAINT_CATEGORIES[number];
+export type ComplaintCategory = typeof COMPLAINT_CATEGORIES[number];
