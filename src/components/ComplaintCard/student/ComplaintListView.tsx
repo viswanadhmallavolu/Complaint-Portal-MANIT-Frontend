@@ -55,13 +55,13 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
             Back to Categories
           </button>
 
-          <button
+            <button
             onClick={() => props.onSetIsFilterOpen(!props.isFilterOpen)}
-            className="flex items-center justify-center px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-50 transition-colors border border-gray-200"
-          >
+            className="flex items-center justify-center px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-lg shadow-sm hover:bg-black/40 transition-colors border border-gray-600"
+            >
             <Calendar size={18} className="mr-2" />
             Filter by Date
-          </button>
+            </button>
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 capitalize">

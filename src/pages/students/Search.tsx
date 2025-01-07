@@ -160,7 +160,7 @@ function SearchPage() {
                     <p className="mt-1 text-sm text-gray-900">{complaint.description}</p>
                   </div>
                 </div>
-                {(complaint.attachments?.length || complaint.AdminAttachments?.length) && (
+                {(complaint.attachments?.length > 0  ) && (
                   <div className="px-6 py-5">
                     <AttachmentGallery
                       attachments={complaint.attachments ?? []}

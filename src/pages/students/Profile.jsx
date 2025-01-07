@@ -112,11 +112,11 @@ const Profile = () => {
 
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Accommodation Details
+                  Generic Details
                 </h2>
                 <div className="space-y-4">
-                  <InfoItem icon={Home} label="Room" value={user?.room} />
-                  <InfoItem icon={Building} label="Hostel" value={user?.hostel} />
+                  <InfoItem icon={Home} label="Address" value={user?.postalAddress} />
+                  
                   <InfoItem icon={Users} label="Role" value={user?.role} />
                 </div>
               </div>

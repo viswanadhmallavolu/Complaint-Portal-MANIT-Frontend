@@ -6,12 +6,12 @@ import { getComplaintsByDateRange_Admin, updateComplaintStatusAdmin, getComplain
 import { Complaint, ComplaintCategory, ReadStatus, ComplaintFilters } from '../../types/complaint';
 import ComplaintHeader from '../../components/ComplaintHeader';
 import ErrorBoundary from '../../components/ErrorBoundary';
-import Cookies from 'js-cookie';
+
 import { VariableSizeList as List } from 'react-window';
 import { calculateItemHeight } from '../../components/Utility/heightCalculator';
 
 import { toast } from 'react-toastify';
-import ReactMemo from 'react';
+
 
 const ComplaintList = () => {
     const { category } = useParams<{ category: string }>();
@@ -144,11 +144,7 @@ const ComplaintList = () => {
         fetchStatistics();
     }, [fetchStatistics]);
 
-    // useEffect(() => {
-    //     if(categoryStats !== null) {
-    //         setStatistics(categoryStats);
-    //     }
-    // }, [categoryStats]);
+    
 
     useEffect(() => {
         if (category) {
