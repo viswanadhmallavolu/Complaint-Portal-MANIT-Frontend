@@ -7,10 +7,7 @@ const Layout = () => {
   const { pathname } = useLocation();
 
   const scrollUp = () => {
-    const scrollableElement = document.querySelector("body > div");
-    if (scrollableElement) {
-      scrollableElement.scrollTop = 0;
-    }
+    window.scrollTo(0, 0);
   };
 
   useEffect(scrollUp, [pathname]);

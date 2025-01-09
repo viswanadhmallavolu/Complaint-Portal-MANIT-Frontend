@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';  // Add this import
+import './customToast.css'; // Import custom toast styles
 import SearchPage from "./pages/students/Search.tsx";
 import Contacts from "./pages/students/Contacts.tsx";
 
@@ -39,6 +40,7 @@ const App = () => {
         closeOnClick={true}
         pauseOnHover={false}
         draggable={true}
+        className="custom-toast" // Added for responsive styling
       />
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -167,7 +169,7 @@ const RedirectBasedOnRole = () => {
       } else if (auth?.role === "student") {
         navigate('/student/home', { replace: true });
       } else if (auth?.role === "admin") {
-        navigate('/admin/dashboard', { replace: true });
+        navigate('/admin/complaints', { replace: true });
       }
     }
   }, [auth, isLoading, navigate]);

@@ -41,3 +41,5 @@ export const MetricCard = ({
         </div>
     );
 };
+
+export default MetricCard;

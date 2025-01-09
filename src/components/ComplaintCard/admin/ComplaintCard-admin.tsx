@@ -60,9 +60,15 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
     >
       <div className="flex justify-between items-start mb-6">
         <div className="space-y-2">
-          <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 inline-block">
-            {`${Math.floor((Date.now() - new Date(complaint.dateSubmitted).getTime()) / (1000 * 60 * 60 * 24))} days ago`}
-          </span>
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 inline-block">
+            {(() => {
+              const days = Math.floor(
+              (new Date().setHours(0, 0, 0, 0) - new Date(complaint.dateSubmitted).setHours(0, 0, 0, 0)) 
+              / (1000 * 60 * 60 * 24)
+              );
+              return days <= 0 ? 'Today' : `${days} days ago`;
+            })()}
+            </span>
           <h3 className="text-xl font-semibold text-gray-800">
             {complaint.category === 'Anonymous' ? 'Anonymous Complaint' : `${complaint.scholarNumber}'s Complaint`}
           </h3>
@@ -107,14 +113,10 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Complaint Details"
+        title="Details "
       >
         <div className="space-y-6">
           <ComplaintDetails complaint={complaint} />
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
-            <p className="text-gray-700 leading-relaxed">{complaint.description}</p>
-          </div>
           <AttachmentGallery
             attachments={complaint.attachments}
             adminAttachments={complaint.AdminAttachments}

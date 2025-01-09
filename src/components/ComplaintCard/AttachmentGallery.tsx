@@ -4,6 +4,7 @@ import { ExternalLink } from 'lucide-react';
 
 
 const student_api_base_url = import.meta.env.VITE_STUDENT_API as string;
+const admin_api_base_url =  import.meta.env.VITE_ADMIN_API as string;
 
 interface Attachment {
   url: string;
@@ -31,13 +32,14 @@ export const AttachmentGallery: React.FC<AttachmentGalleryProps> = ({ attachment
     window.open(`${student_api_base_url}uploads/${correctedFilename}`, '_blank', 'noopener,noreferrer');
   };
 
-  const getImageUrl = (url: string) => {
+  const getImageUrl = (url: string, isAdmin: boolean) => {
+    const baseUrl = isAdmin ? admin_api_base_url : student_api_base_url;
     const correctedFilename = url.replace(/\\/g, '/').split('/').pop();
     if (!correctedFilename) {
       console.error('Filename not found in URL:', url);
       return null;
     }
-    return `${student_api_base_url}uploads/${correctedFilename}`;
+    return `${baseUrl}uploads/${correctedFilename}`;
   };
 
   return (
@@ -52,7 +54,7 @@ export const AttachmentGallery: React.FC<AttachmentGalleryProps> = ({ attachment
                 return null;
               }
 
-              const imageUrl = getImageUrl(attachment.url);
+              const imageUrl = getImageUrl(attachment.url, false);
               if (!imageUrl) return null;
 
               return (
@@ -91,7 +93,7 @@ export const AttachmentGallery: React.FC<AttachmentGalleryProps> = ({ attachment
                 return null;
               }
 
-              const imageUrl = getImageUrl(url);
+              const imageUrl = getImageUrl(url, true);
               if (!imageUrl) return null;
 
               return (

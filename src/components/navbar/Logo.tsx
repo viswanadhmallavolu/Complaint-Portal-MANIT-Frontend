@@ -8,6 +8,9 @@ export const Logo = () => {
           <img
             src="/logo/MANIT-Logo.png"
             alt="MANIT"
+            width={300}
+            height={100}
+            loading="lazy"
             className="max-sm:w-full sm:w-[70%] lg:w-[50%]"
           />
         </a>

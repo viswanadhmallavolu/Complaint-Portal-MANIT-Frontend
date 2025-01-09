@@ -68,3 +68,5 @@ export const OverallMetrics = ({ data }: OverallMetricsProps) => {
     </div>
   );
 };
+
+export default OverallMetrics;

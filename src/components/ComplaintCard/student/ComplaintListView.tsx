@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { ArrowLeft, Calendar, Search, Trash2 } from 'lucide-react';
 import { VariableSizeList as List } from 'react-window';
 import { Complaint } from '../../../types/complaint';
@@ -18,11 +18,90 @@ interface ComplaintListViewProps {
   onSetIsFilterOpen: (isOpen: boolean) => void;
   onUpdateComplaint: (id: string, updates: Partial<Complaint>) => Promise<void>;
   onDeleteComplaint: (id: string) => Promise<void>;
-  onFilterByDateRange: () => Promise<void>;
+  onFilterByDateRange: (
+    complaintIds: string[],
+    complaintType: string,
+    status: string,
+    readStatus: string
+  ) => Promise<void>;
   onClearFilters: () => Promise<void>;
   onNavigateBack: () => void;
-  getItemSize: (index: number) => number; // Ensure this prop is included
+  getItemSize: (index: number) => number;
+  complaintType: string;
+  status: string;
+  readStatus: string;
+  complaintIds: string[];
+  onSetComplaintType: (type: string) => void;
+  onSetStatus: (status: string) => void;
+  onSetReadStatus: (status: string) => void;
+  onSetComplaintIds: (ids: string[]) => void;
 }
+
+const complaintTypeOptions: Record<string, string[]> = {
+  hostel: ['Maintenance','Hygiene','Security','Mess','Bathroom','Room','Noise','Other'],
+  medical: ['Doctor','Medicine','Ambulance','Other'],
+  infrastructure: ['Electricity','Water','Internet','Bus','Classroom','Library','Sports','Lab','Other'],
+  administration: ['Documents','Accounts','Scholarship','Details','Other'],
+  academic: ['Timetable','Course','Faculty','Other'],
+  ragging: [],
+  '': []
+};
+
+interface TagInputProps {
+  label: string;
+  placeholder: string;
+  tags: string[];
+  onChange: (newTags: string[]) => void;
+}
+
+const TagInput: React.FC<TagInputProps> = ({ label, placeholder, tags, onChange }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleAddTag = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputValue.trim() !== "") {
+      if (!tags.includes(inputValue.trim())) {
+        onChange([...tags, inputValue.trim()]);
+      }
+      setInputValue("");
+    }
+  }, [inputValue, tags]);
+
+  const handleRemoveTag = useCallback((idx: number) => {
+    const newTags = [...tags];
+    newTags.splice(idx, 1);
+    onChange(newTags);
+  }, [tags]);
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <div className="flex flex-wrap gap-2 mb-2">
+        {tags.map((tag, i) => (
+          <div
+            key={i}
+            className="flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700"
+          >
+            {tag}
+            <button
+              onClick={() => handleRemoveTag(i)}
+              className="ml-2 text-red-500 text-sm"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleAddTag}
+        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+  );
+};
 
 const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
   if (props.loading && props.complaints.length === 0) {
@@ -33,7 +112,7 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
     );
   }
 
-  const Row = ({ index, style }) => (
+  const Row = memo(({ index, style }: { index: number; style: React.CSSProperties }) => (
     <div style={{ ...style, padding: '0.5rem 1rem' }} className="complaint-row">
       <ComplaintCard
         complaint={props.complaints[index]}
@@ -41,7 +120,7 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
         onDelete={props.onDeleteComplaint}
       />
     </div>
-  );
+  ));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 md:p-8">
@@ -59,8 +138,7 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
             onClick={() => props.onSetIsFilterOpen(!props.isFilterOpen)}
             className="flex items-center justify-center px-4 py-2 bg-black/30 backdrop-blur-sm text-white rounded-lg shadow-sm hover:bg-black/40 transition-colors border border-gray-600"
             >
-            <Calendar size={18} className="mr-2" />
-            Filter by Date
+            Filters
             </button>
         </div>
 
@@ -69,35 +147,95 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
         </h1>
 
         {props.isFilterOpen && (
-          <div className="bg-white rounded-lg shadow-sm p-4 mb-6 transition-all">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {['Start Date', 'End Date'].map((label, index) => (
-                <div className="space-y-2" key={index}>
-                  <label className="block text-sm font-medium text-gray-700">{label}</label>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+            <div className="bg-white rounded-xl p-6 w-full max-w-xl">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Filters</h2>
+                <button onClick={() => props.onSetIsFilterOpen(false)}>
+                  ×
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Start Date</label>
                   <input
                     type="date"
-                    value={index === 0 ? props.startDate : props.endDate}
-                    onChange={(e) => (index === 0 ? props.onSetStartDate(e.target.value) : props.onSetEndDate(e.target.value))}
+                    value={props.startDate}
+                    onChange={(e) => props.onSetStartDate(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-              ))}
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 mt-4">
-              <button
-                onClick={props.onFilterByDateRange}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center"
-              >
-                <Search size={18} className="mr-2" />
-                Apply Filter
-              </button>
-              <button
-                onClick={props.onClearFilters}
-                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center"
-              >
-                <Trash2 size={18} className="mr-2" />
-                Clear Filters
-              </button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">End Date</label>
+                  <input
+                    type="date"
+                    value={props.endDate}
+                    onChange={(e) => props.onSetEndDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Complaint Type</label>
+                  <select
+                    value={props.complaintType}
+                    onChange={(e) => props.onSetComplaintType(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Type</option>
+                    {complaintTypeOptions[props.category?.toLowerCase() || ''].map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Status</label>
+                  <select
+                    value={props.status}
+                    onChange={(e) => props.onSetStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Resolved">Resolved</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Read Status</label>
+                  <select
+                    value={props.readStatus}
+                    onChange={(e) => props.onSetReadStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Read Status</option>
+                    <option value="Viewed">Viewed</option>
+                    <option value="Not Viewed">Not Viewed</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <TagInput
+                    label="Complaint IDs"
+                    placeholder="Press Enter to add complaint ID"
+                    tags={props.complaintIds}
+                    onChange={props.onSetComplaintIds}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-6">
+                <button
+                  onClick={props.onClearFilters}
+                  className="bg-gray-100 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-200 transition-colors"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => props.onFilterByDateRange(props.complaintIds, props.complaintType, props.status, props.readStatus)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
         )}

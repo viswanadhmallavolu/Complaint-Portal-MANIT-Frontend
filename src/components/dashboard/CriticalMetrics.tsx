@@ -1,9 +1,10 @@
 import { AlertTriangle, Clock, CheckCircle } from 'lucide-react';
-import { MetricCard } from './MetricCard';
+import React, { lazy, Suspense } from 'react';
 import { AnalyticsData } from '../../types/analytics';
-import React from 'react';
-import { OverallMetrics } from './OverallMetrics';
-import { CategoryMetrics } from './CategoryMetrics';
+
+const LazyOverallMetrics = lazy(() => import('./OverallMetrics'));
+const LazyCategoryMetrics = lazy(() => import('./CategoryMetrics'));
+const LazyMetricCard = lazy(() => import('./MetricCard'));
 
 interface CriticalMetricsProps {
   data: AnalyticsData;
@@ -90,36 +91,48 @@ export const CriticalMetrics = ({ data = {}, resolutionData = {} }: CriticalMetr
 
   return (
     <div className="space-y-6 bg-gray-50 p-6 rounded-lg">
-      <OverallMetrics data={data} />
+      <Suspense fallback={<div>Loading metrics...</div>}>
+        <LazyOverallMetrics data={data} />
+      </Suspense>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <MetricCard
-          title="Hot Topic"
-          value={hotTopic.category}
-          trend={hotTopic.trend}
-          subValue={`${hotTopic.total} complaints`}
-          icon={<AlertTriangle className="text-white" />}
-          colorClass="from-orange-500 to-orange-600"
-        />
+        <Suspense fallback={<div>Loading hot topic...</div>}>
+          <LazyMetricCard
+            title="Hot Topic"
+            value={hotTopic.category}
+            trend={hotTopic.trend}
+            subValue={`${hotTopic.total} complaints`}
+            icon={<AlertTriangle className="text-white" />}
+            colorClass="from-orange-500 to-orange-600"
+          />
+        </Suspense>
         
-        <MetricCard
-          title="Most Neglected"
-          value={mostNeglected.category}
-          trend={mostNeglected.total}
-          subValue={`Avg. Response: ${mostNeglected.responseTime}`}
-          icon={<Clock className="text-white" />}
-          colorClass="from-yellow-500 to-yellow-600"
-        />
+        <Suspense fallback={<div>Loading most neglected...</div>}>
+          <LazyMetricCard
+            title="Most Neglected"
+            value={mostNeglected.category}
+            trend={mostNeglected.total}
+            subValue={`Avg. Response: ${mostNeglected.responseTime}`}
+            icon={<Clock className="text-white" />}
+            colorClass="from-yellow-500 to-yellow-600"
+          />
+        </Suspense>
         
-        <MetricCard
-          title="Best Maintained"
-          value={bestMaintained.category}
-          trend={-bestMaintained.total}  // Negative trend because lower is better
-          subValue={`Avg. Resolution: ${bestMaintained.resolutionTime}`}
-          icon={<CheckCircle className="text-white" />}
-          colorClass="from-emerald-500 to-emerald-600"
-        />
+        <Suspense fallback={<div>Loading best maintained...</div>}>
+          <LazyMetricCard
+            title="Best Maintained"
+            value={bestMaintained.category}
+            trend={-bestMaintained.total}  // Negative trend because lower is better
+            subValue={`Avg. Resolution: ${bestMaintained.resolutionTime}`}
+            icon={<CheckCircle className="text-white" />}
+            colorClass="from-emerald-500 to-emerald-600"
+          />
+        </Suspense>
       </div>
-      <CategoryMetrics data={data} resolutionData={resolutionData} />
+      
+      <Suspense fallback={<div>Loading category metrics...</div>}>
+        <LazyCategoryMetrics data={data} resolutionData={resolutionData} />
+      </Suspense>
     </div>
   );
 };

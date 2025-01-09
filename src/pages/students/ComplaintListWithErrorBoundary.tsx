@@ -22,6 +22,10 @@ const ComplaintList = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [csrfToken, setCsrfToken] = useState('');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [complaintType, setComplaintType] = useState('');
+  const [status, setStatus] = useState('');
+  const [readStatus, setReadStatus] = useState('');
+  const [complaintIds, setComplaintIds] = useState<string[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -108,15 +112,26 @@ const ComplaintList = () => {
     }
   };
 
-  const handleFilterByDateRange = async () => {
+  const handleFilterByDateRange = async (
+    complaintIds: string[],
+    complaintType: string,
+    status: string,
+    readStatus: string
+  ) => {
     if (!category) {
       setError('Category is not defined.');
       return;
     }
     setLoading(true);
+    const filters = {
+      complaintIds,
+      complaintType,
+      status,
+      readStatus,
+    };
     setError(null);
     try {
-      const data = await getComplaintsByDateRange(category as ComplaintCategory, startDate, endDate, role);
+      const data = await getComplaintsByDateRange(category as ComplaintCategory, startDate, endDate, filters,role);
       // Sort filtered complaints by date in descending order
       const sortedData = [...data].sort((a, b) => 
         new Date(b.dateSubmitted).getTime() - new Date(a.dateSubmitted).getTime()
@@ -166,6 +181,14 @@ const ComplaintList = () => {
       onFilterByDateRange={handleFilterByDateRange}
       onClearFilters={clearFilters}
       onNavigateBack={() => navigate('/student/home')}
+      complaintType={complaintType}
+      status={status}
+      readStatus={readStatus}
+      complaintIds={complaintIds}
+      onSetComplaintType={setComplaintType}
+      onSetStatus={setStatus}
+      onSetReadStatus={setReadStatus}
+      onSetComplaintIds={setComplaintIds}
     />
   );
 };

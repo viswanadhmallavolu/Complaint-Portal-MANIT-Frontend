@@ -26,7 +26,8 @@ const ComplaintList = () => {
             scholarNumbers: [],
             readStatus: '',
             status: '',
-            hostelNumber: ''
+            hostelNumber: '',
+            complaintIds: []
         };
         return JSON.stringify(filters) === JSON.stringify(defaultFilters);
     };
@@ -40,7 +41,8 @@ const ComplaintList = () => {
             scholarNumbers: [],
             readStatus: '',
             status: '',
-            hostelNumber: ''
+            hostelNumber: '',
+            complaintIds: []
         };
         return savedFilters ? JSON.parse(savedFilters) : defaultFilters;
     });
@@ -246,7 +248,8 @@ const ComplaintList = () => {
             scholarNumbers: [''],
             readStatus: '',
             status: '',
-            hostelNumber: '' as const
+            hostelNumber: '' as const,
+            complaintIds: []
         };
         setFilters(defaultFilters);
         setComplaints([]);

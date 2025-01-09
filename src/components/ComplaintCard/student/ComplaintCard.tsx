@@ -145,18 +145,14 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
             <p className="text-gray-700 leading-relaxed">{complaint.description}</p>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start gap-6 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-gray-500" />
-              <span>{new Date(complaint.dateSubmitted).toLocaleDateString()}</span>
+
+          {complaint.AdminRemarks && (
+            <div className="bg-gray-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Admin Remarks : </h3>
+              <p className="text-gray-700 leading-relaxed">{complaint.AdminRemarks}</p>
             </div>
-            {complaint.AdminRemarks && (
-              <div className="flex items-center gap-2">
-                <MessageSquare size={16} className="text-gray-500" />
-                <span>Admin Remarks: {complaint.AdminRemarks}</span>
-              </div>
-            )}
-          </div>
+          )}
+
 
           <AttachmentGallery
             attachments={complaint.attachments}

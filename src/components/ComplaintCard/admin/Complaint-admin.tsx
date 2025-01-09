@@ -117,12 +117,6 @@ const ComplaintCard: React.FC<ComplaintCardProps> = memo(({ complaint, onUpdate,
                   <Calendar size={16} className="text-gray-500" />
                   <span>{new Date(complaint.dateSubmitted).toLocaleDateString()}</span>
                 </div>
-                {complaint.AdminRemarks && (
-                  <div className="flex items-center gap-2">
-                    <MessageSquare size={16} className="text-gray-500" />
-                    <span>Admin Remarks: {complaint.AdminRemarks}</span>
-                  </div>
-                )}
               </div>
 
               <AttachmentGallery 

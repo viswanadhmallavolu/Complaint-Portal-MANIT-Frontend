@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Search, Info } from 'lucide-react';
 import { ComplaintDetails } from '../ComplaintCard/ComplaintDetails';
+import { AttachmentGallery } from '../ComplaintCard/AttachmentGallery';
 
 import { COMPLAINT_CATEGORIES } from '../../constants/categories';
 
@@ -26,12 +27,12 @@ export const ComplaintSection: React.FC<ComplaintSectionProps> = ({
   }, [complaint]);
 
   return (
-    <section className="bg-white rounded-lg shadow-md p-6">
+    <section className="bg-white rounded-lg shadow-md p-6 overflow-y-auto">
       <div className="flex items-center gap-2 mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">Fetch Complaint</h2>
         <div className="group relative">
           <Info size={20} className="text-gray-400 cursor-help" />
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg">
+          <div className="absolute z-[999999] left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg">
             This section is helpful to search the complaint by using the complaint ID and category from the log file
             <div className="absolute left-1/2 -translate-x-1/2 top-full w-2 h-2 bg-gray-800 rotate-45"></div>
           </div>
@@ -80,9 +81,16 @@ export const ComplaintSection: React.FC<ComplaintSectionProps> = ({
         </div>
         
         {complaint && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg overflow-y-auto">
             <ComplaintDetails complaint={complaint} />
+            
+            
+            {(complaint.attachments?.length || complaint.adminAttachments?.length) && (
+              <AttachmentGallery
+                attachments={complaint.attachments ?? []}
+                adminAttachments={complaint.adminAttachments ?? []}
+              />
+            )}
           </div>
         )}
       </div>

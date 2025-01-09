@@ -1,11 +1,11 @@
-import React from 'react';
-import { Pie } from 'react-chartjs-2';
+import React, { lazy, Suspense, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Interaction, ChartOptions } from 'chart.js';
 import { ComplaintData } from '../../types/analytics';
-import { useState } from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
+
+const LazyPie = lazy(() => import('react-chartjs-2').then(m => ({ default: m.Pie })));
 
 interface PieChartProps {
     data: ComplaintData[];
@@ -95,11 +95,13 @@ export const PieChart = ({ data }: PieChartProps) => {
 
     return (
         <div className="h-[400px] w-full shadow-lg rounded-lg p-4 bg-white">
-            <Pie
-                data={chartData}
-                options={options}
-                className={`transition-transform duration-300 ${activeIndex !== null ? 'transform scale-105' : ''}`}
-            />
+            <Suspense fallback={<div>Loading chart...</div>}>
+                <LazyPie
+                    data={chartData}
+                    options={options}
+                    className={`transition-transform duration-300 ${activeIndex !== null ? 'transform scale-105' : ''}`}
+                />
+            </Suspense>
             {activeIndex !== null && (
                 <div className="mt-4 text-center">
                     <h3 className="text-lg font-semibold">{data[activeIndex].category}</h3>

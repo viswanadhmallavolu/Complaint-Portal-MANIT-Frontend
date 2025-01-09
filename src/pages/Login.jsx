@@ -3,29 +3,31 @@ import LoginForm from "../components/LoginForm";
 
 const Login = () => {
   return (
-    <div className="bg-[#1677c8] px-8 pt-3 pb-8 w-full">
-      <div className="w-full text-center bg-black mb-5 p-2 rounded-lg text-white max-sm:text-sm">
+    <div className="bg-[#1677c8] px-4 pt-2 pb-4 w-full">
+      <div className="w-full text-center bg-black mb-4 p-2 rounded-lg text-white max-sm:text-sm">
         <p>
           Any Grievance sent by email will not be attended to / entertained.
           Please lodge your grievance on this portal.
         </p>
       </div>
       <div className="flex justify-center items-center">
-        <div className="bg-transparent rounded-lg overflow-hidden w-full max-w-4xl flex max-sm:flex-col-reverse">
-          <div className="w-1/2 max-sm:w-full p-8 max-md:p-2">
-            <LoginForm></LoginForm>
+        <div className="bg-transparent rounded-lg overflow-hidden w-full max-w-2xl flex max-sm:flex-col-reverse">
+          <div className="w-1/2 max-sm:w-full p-4 max-md:p-2">
+            <LoginForm />
           </div>
-          <div className="w-1/2 max-sm:w-full p-8 max-md:p-2 text-white flex flex-col justify-center">
+          <div className="w-1/2 max-sm:w-full p-4 max-md:p-2 text-white flex flex-col justify-center">
             <div>
               <div className="flex justify-center mb-1">
-                <img
-                  src="/icons/login-rm.png"
-                  alt="Quiz Icons"
-                  className=" w-52 h-52"
-                />
+                <a href="https://manit.ac.in" target="_blank" rel="noreferrer">
+                  <img
+                    src="public/logo/manit_sm.png"
+                    alt="MANIT Logo"
+                    className="w-32 h-32"
+                  />
+                </a>
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-center">
-                Welcome Back
+              <h2 className="text-xl font-bold mb-2 text-center">
+                Your Voice Matters.
               </h2>
               <p className="text-center">
                 Please Login <br /> using your LDAP ID and Password

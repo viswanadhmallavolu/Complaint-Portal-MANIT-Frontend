@@ -49,7 +49,7 @@ export const ComplaintModal: React.FC<ModalProps> = ({ isOpen, onClose, children
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-4xl bg-white rounded-xl shadow-xl transform transition-all duration-300 ease-out"
+        className="relative w-full max-w-4xl bg-gray-200 rounded-xl shadow-xl transform transition-all duration-300 ease-out"
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 id="modal-title" className="text-xl font-semibold text-gray-900">

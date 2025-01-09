@@ -198,7 +198,8 @@ export interface ComplaintFilters {
     complaintType: string;
     scholarNumbers: string[];
     readStatus: string;
-    status: string ;
-    hostelNumber : HostelNumber | '';
+    status: string;
+    hostelNumber: string;
+    complaintIds: string[];
 }
 

@@ -262,13 +262,23 @@ export const getComplaintsByDateRange = async (
 	category: ComplaintCategory,
 	startDate: string,
 	endDate: string,
+	filters : any,
 	role: string
 ): Promise<Complaint[]> => {
 	try {
 		console.log("Fetching complaints by date range:", startDate, " ", endDate);
 		const api = getApi(role);
+		const {complaintIds,complaintType,status,readStatus}=filters;
 		const response = await api.get<{ complaints: any[] }>(
-			`/complain/get-complaints-date/${category}?startDate=${startDate}&endDate=${endDate}`
+			`/complain/get-complaints-date/${category}?startDate=${startDate}&endDate=${endDate}`,
+			{
+				params: {
+					complaintIds,
+					complaintType,
+					status,
+					readStatus,
+				},
+			}
 		);
 		console.log("Complaints by date range:", response.data.complaints);
 		return response.data.complaints.map(mapComplaint);
@@ -381,7 +391,7 @@ export const get_Complaint_byId = async (
 	const response = await admin_api.get(
 		`/utility/${category}?id=${complaintId}`
 	);
-	console.log(mapComplaint(response.data.complaint));
+	console.log("This is the complaint upon request by admin : " , mapComplaint(response.data.complaint));
 	return mapComplaint(response.data.complaint);
 };
 

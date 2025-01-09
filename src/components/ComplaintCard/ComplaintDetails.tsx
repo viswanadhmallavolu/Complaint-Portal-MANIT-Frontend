@@ -1,5 +1,23 @@
 import React from 'react';
-import { Hash, Building2, School, MapPin, GraduationCap, BookOpen, MessageSquare } from 'lucide-react';
+import { 
+  Ticket, 
+  Building, 
+  School, 
+  MapPin, 
+  GraduationCap, 
+  BookOpen, 
+  MessageCircle, 
+  FileText,
+  Calendar,
+  User,
+  AlertCircle,
+  CheckCircle2,
+  Building2,
+  Landmark,
+  BookMarked,
+  HelpCircle,
+  ClipboardList
+} from 'lucide-react';
 import { Complaint } from '../../types/complaint';
 import { useParams } from 'react-router-dom';
 
@@ -19,15 +37,16 @@ const SkeletonDetailItem = () => (
 
 export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, isLoading = false }) => {
   const category = useParams<{ category: string }>().category;
+
   const renderEducationDetails = (stream?: string, year?: string) => {
     if (!stream && !year) return null;
     return (
       <>
         {stream && (
-          <DetailItem icon={<GraduationCap />} label="Stream" value={stream} />
+          <DetailItem icon={<BookMarked className="text-purple-600" />} label="Stream" value={stream} />
         )}
         {year && (
-          <DetailItem icon={<BookOpen />} label="Year" value={year} />
+          <DetailItem icon={<GraduationCap className="text-blue-600" />} label="Year" value={year} />
         )}
       </>
     );
@@ -38,10 +57,10 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
     return (
       <div className="col-span-full mt-3 w-full">
         <DetailItem 
-          icon={<MessageSquare />} 
+          icon={<MessageCircle className="text-indigo-600" />} 
           label="Admin Remarks" 
           value={remarks}
-          className="text-indigo-700 bg-indigo-100 p-4 rounded-lg shadow-md break-words"
+          className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg shadow-md break-words border border-indigo-100"
         />
       </div>
     );
@@ -68,28 +87,34 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
           <DetailItem 
             label="Complaint ID" 
             value={complaint.id} 
-            icon={<Hash className="text-blue-500" />} 
+            icon={<Ticket className="text-blue-600" />} 
           />
         </div>
+        
         {complaint.resolvedAt && (
           <DetailItem 
             label="Resolved On" 
             value={new Date(complaint.resolvedAt).toLocaleString()} 
-            icon={<Hash className="text-green-500" />} 
+            icon={<CheckCircle2 className="text-green-600" />} 
           />
         )}
+        
         {(() => {
           switch (complaint.category) {
             case 'Hostel':
               return (
                 <>
-                  <DetailItem icon={<Building2 className="text-orange-500" />} label="Location" value={`Hostel ${complaint.hostelNumber}, Room ${complaint.roomNumber}`} />
+                  <DetailItem 
+                    icon={<Building2 className="text-amber-600" />} 
+                    label="Location" 
+                    value={`Hostel ${complaint.hostelNumber}, Room ${complaint.roomNumber}`} 
+                  />
                   <DetailItem
                     label="Type"
                     value={complaint.complaintType.charAt(0).toUpperCase() + complaint.complaintType.slice(1)}
-                    icon={<Hash className="text-purple-500" />}
+                    icon={<ClipboardList className="text-purple-600" />}
                   />
-                  {renderAdminRemarks(complaint.AdminRemarks)}
+                  
                 </>
               );
 
@@ -99,11 +124,15 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
                   <DetailItem
                     label="Type"
                     value={complaint.complaintType.charAt(0).toUpperCase() + complaint.complaintType.slice(1)}
-                    icon={<Hash className="text-red-500" />}
+                    icon={<AlertCircle className="text-red-600" />}
                   />
-                  <DetailItem icon={<Hash className="text-yellow-500" />} label="Scholar No" value={complaint.scholarNumber} />
+                  <DetailItem 
+                    icon={<User className="text-indigo-600" />} 
+                    label="Scholar No" 
+                    value={complaint.scholarNumber} 
+                  />
                   {renderEducationDetails(complaint.stream, complaint.year)}
-                  {renderAdminRemarks(complaint.AdminRemarks)}
+                  
                 </>
               );
 
@@ -113,12 +142,20 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
                   <DetailItem
                     label="Type"
                     value={complaint.complaintType.charAt(0).toUpperCase() + complaint.complaintType.slice(1)}
-                    icon={<Hash className="text-teal-500" />}
+                    icon={<Landmark className="text-teal-600" />}
                   />
-                  <DetailItem icon={<Hash className="text-pink-500" />} label="Scholar No" value={complaint.scholarNumber} />
-                  <DetailItem icon={<School className="text-indigo-500" />} label="Department" value={complaint.department} />
+                  <DetailItem 
+                    icon={<User className="text-indigo-600" />} 
+                    label="Scholar No" 
+                    value={complaint.scholarNumber} 
+                  />
+                  <DetailItem 
+                    icon={<Building className="text-violet-600" />} 
+                    label="Department" 
+                    value={complaint.department} 
+                  />
                   {renderEducationDetails(complaint.stream, complaint.year)}
-                  {renderAdminRemarks(complaint.AdminRemarks)}
+                  
                 </>
               );
 
@@ -128,12 +165,20 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
                   <DetailItem
                     label="Type"
                     value={complaint.complaintType.charAt(0).toUpperCase() + complaint.complaintType.slice(1)}
-                    icon={<Hash className="text-gray-700" />}
+                    icon={<BookOpen className="text-emerald-600" />}
                   />
-                  <DetailItem icon={<Hash className="text-green-600" />} label="Scholar No" value={complaint.scholarNumber} />
-                  <DetailItem icon={<School className="text-blue-600" />} label="Department" value={complaint.department} />
+                  <DetailItem 
+                    icon={<User className="text-indigo-600" />} 
+                    label="Scholar No" 
+                    value={complaint.scholarNumber} 
+                  />
+                  <DetailItem 
+                    icon={<School className="text-blue-600" />} 
+                    label="Department" 
+                    value={complaint.department} 
+                  />
                   {renderEducationDetails(complaint.stream, complaint.year)}
-                  {renderAdminRemarks(complaint.AdminRemarks)}
+                  
                 </>
               );
 
@@ -143,15 +188,25 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
                   <DetailItem
                     label="Type"
                     value={complaint.complaintType.charAt(0).toUpperCase() + complaint.complaintType.slice(1)}
-                    icon={<MapPin className="text-purple-600" />}
+                    icon={<Building className="text-orange-600" />}
                   />
-                  <DetailItem icon={<MapPin className="text-pink-600" />} label="Location" value={complaint.landmark} />
-                  {renderAdminRemarks(complaint.AdminRemarks)}
+                  <DetailItem 
+                    icon={<MapPin className="text-rose-600" />} 
+                    label="Location" 
+                    value={complaint.landmark} 
+                  />
+                  
                 </>
               );
 
             default:
-              return null;
+              return (
+                <DetailItem
+                  label="Unknown Category"
+                  value="Category not recognized"
+                  icon={<HelpCircle className="text-gray-600" />}
+                />
+              );
           }
         })()}
       </>
@@ -159,8 +214,11 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
   };
 
   return (
-    <div className="bg-gradient-to-r from-white to-gray-100 shadow-lg rounded-2xl p-8">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">{category}</h2>
+    <div className="bg-gradient-to-br from-white via-gray-50 to-blue-50 shadow-xl rounded-2xl p-8 overflow-y-auto max-h-screen border border-gray-100">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+        <ClipboardList className="text-blue-600" />
+         Category : {category} 
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {renderDetails()}
       </div>
@@ -181,9 +239,9 @@ const DetailItem: React.FC<DetailItemProps> = ({
   value,
   className = ''
 }) => (
-  <div className={`flex items-start gap-4 w-full p-5 bg-white rounded-xl hover:bg-blue-50 transition-colors shadow-sm ${className}`}>
+  <div className={`flex items-start gap-4 w-full p-4 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md ${className} text-sm group`}>
     {icon && (
-      <span className="text-gray-700 mt-1 shrink-0">
+      <span className="text-gray-700 mt-1 shrink-0 group-hover:scale-110 transition-transform duration-300">
         {React.cloneElement(icon as React.ReactElement, { size: 24 })}
       </span>
     )}

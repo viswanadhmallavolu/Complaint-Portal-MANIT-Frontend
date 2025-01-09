@@ -1,0 +1,8 @@
+/* Define the navbar height */
+:root {
+  --navbar-height: 128px; /* Updated to match the navbar's height (h-32) */
+}
+
+.main-content {
+  padding-top: var(--navbar-height);
+}
