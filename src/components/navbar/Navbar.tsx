@@ -28,7 +28,7 @@ const Navbar = () => {
               <p className="font-bold">Complaint Management Portal (v1.0.0)</p>
             </span>
             {auth?.role && (
-              <div className="rounded-lg px-4 max-sm:px-2 py-1 flex justify-between items-center border-2 border-white mb-4">
+              <div className="rounded-lg px-4 max-sm:px-2 py-1 flex justify-between items-center sm:border-2 sm:border-white mb-4">
                 {/* Desktop Navigation */}
                 <div className="hidden sm:flex items-center justify-between w-full">
                   <NavLinks role={auth.role} />

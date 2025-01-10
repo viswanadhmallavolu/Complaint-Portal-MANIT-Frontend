@@ -1,4 +1,3 @@
-
 import React, { useState, memo } from 'react';
 import { Calendar, MessageSquare } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
@@ -29,9 +28,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = memo(({ complaint, onUpdate,
   const handleRemarksSubmit = async (complaintId: string, remarks: string, files: File[]) => {
     setIsLoading(true);
     try {
-      // Upload files and get their URLs
-      const uploadedFileUrls = await uploadFiles(files); // Implement the uploadFiles function
-
+      const uploadedFileUrls = await uploadFiles(files);
       await onUpdate(complaintId, {
         AdminRemarks: remarks,
         AdminAttachments: [...(complaint.AdminAttachments || []), ...uploadedFileUrls]
@@ -43,7 +40,6 @@ const ComplaintCard: React.FC<ComplaintCardProps> = memo(({ complaint, onUpdate,
     }
   };
 
-  // Implement the uploadFiles function
   const uploadFiles = async (files: File[]): Promise<string[]> => {
     const uploadedUrls: string[] = [];
     for (const file of files) {
@@ -127,14 +123,14 @@ const ComplaintCard: React.FC<ComplaintCardProps> = memo(({ complaint, onUpdate,
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   onClick={() => setIsRemarksModalOpen(true)}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  className="flex items-center px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                 >
                   <MessageSquare size={16} className="mr-2" />
                   Add Remarks
                 </button>
                 <button
                   onClick={handleResolveClick}
-                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                  className="flex items-center px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
                 >
                   Resolve Complaint
                 </button>
@@ -144,13 +140,31 @@ const ComplaintCard: React.FC<ComplaintCardProps> = memo(({ complaint, onUpdate,
         </>
       )}
 
-      <div className="flex justify-end mt-6">
+      {/* Updated mobile buttons layout */}
+      <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
         <button
           onClick={onToggleExpand}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
         >
-          {isLoading ? <Skeleton width={60} /> : expanded ? 'Hide Details' : 'View'}
+          {isLoading ? <Skeleton width={60} /> : expanded ? 'Hide Details' : 'View Details'}
         </button>
+        {!expanded && complaint.status !== 'resolved' && (
+          <>
+            <button
+              onClick={() => setIsRemarksModalOpen(true)}
+              className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            >
+              <MessageSquare size={16} className="mr-2" />
+              Admin Remarks
+            </button>
+            <button
+              onClick={handleResolveClick}
+              className="w-full sm:w-auto flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+            >
+              Resolve Complaint
+            </button>
+          </>
+        )}
       </div>
 
       <RemarksModal

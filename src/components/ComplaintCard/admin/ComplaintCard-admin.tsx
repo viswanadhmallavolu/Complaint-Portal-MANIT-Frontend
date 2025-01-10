@@ -60,15 +60,15 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
     >
       <div className="flex justify-between items-start mb-6">
         <div className="space-y-2">
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 inline-block">
+          <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 inline-block">
             {(() => {
               const days = Math.floor(
-              (new Date().setHours(0, 0, 0, 0) - new Date(complaint.dateSubmitted).setHours(0, 0, 0, 0)) 
-              / (1000 * 60 * 60 * 24)
+                (new Date().setHours(0, 0, 0, 0) - new Date(complaint.dateSubmitted).setHours(0, 0, 0, 0)) 
+                / (1000 * 60 * 60 * 24)
               );
               return days <= 0 ? 'Today' : `${days} days ago`;
             })()}
-            </span>
+          </span>
           <h3 className="text-xl font-semibold text-gray-800">
             {complaint.category === 'Anonymous' ? 'Anonymous Complaint' : `${complaint.scholarNumber}'s Complaint`}
           </h3>
@@ -82,32 +82,32 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
         <StatusBadge status={complaint.status} />
       </div>
 
-      <div className="flex justify-between items-center mt-6">
+      {/* Updated button layout with right alignment */}
+      <div className="flex flex-wrap items-center justify-end gap-2 mt-6">
         <button
           onClick={handleModalOpen}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          className="flex-shrink-0 flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm"
         >
-          View Details
+          View 
         </button>
 
-        <div className="flex gap-3">
+        <button
+          onClick={() => setIsRemarksModalOpen(true)}
+          className="flex-shrink-0 flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm"
+        >
+          <MessageSquare size={16} className="mr-2" />
+          Add Remarks
+        </button>
+        
+        {complaint.status !== 'resolved' && (
           <button
-            onClick={() => setIsRemarksModalOpen(true)}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            onClick={handleResolveClick}
+            disabled={isLoading}
+            className="flex-shrink-0 flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 text-sm"
           >
-            <MessageSquare size={16} className="mr-2" />
-            Add Remarks
+            {isLoading ? 'Resolving...' : 'Resolve'}
           </button>
-          {complaint.status !== 'resolved' && (
-            <button
-              onClick={handleResolveClick}
-              disabled={isLoading}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
-            >
-              {isLoading ? 'Resolving...' : 'Resolve Complaint'}
-            </button>
-          )}
-        </div>
+        )}
       </div>
 
       <Modal

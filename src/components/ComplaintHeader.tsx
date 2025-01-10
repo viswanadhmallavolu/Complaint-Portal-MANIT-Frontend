@@ -80,10 +80,10 @@ const ComplaintHeader: React.FC<ComplaintHeaderProps> = ({
   };
 
   const StatCard = ({ icon: Icon, label, value, color }: { icon: any, label: string, value: number, color: string }) => (
-    <div className={`bg-white rounded-xl p-6 shadow-sm border-l-4 ${color} hover:shadow-md transition-all duration-300`}>
+    <div className={`bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-sm border-l-4 ${color} hover:shadow-md transition-all duration-300 flex-shrink-0 w-[280px] sm:w-auto transform hover:-translate-y-1`}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-gray-600 text-sm mb-1">{label}</p>
+          <p className="text-gray-600 text-sm mb-1 font-medium">{label}</p>
           <h3 className="text-2xl font-bold text-gray-900">{loading ? '-' : value}</h3>
         </div>
         <div className={`p-2 rounded-lg ${color.replace('border', 'bg').replace('-600', '-100')}`}>
@@ -153,86 +153,84 @@ const ComplaintHeader: React.FC<ComplaintHeaderProps> = ({
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg p-6 mb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div className="bg-gradient-to-br from-blue-100 to-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
+      <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <button
             onClick={onBackClick}
-            className="flex items-center text-gray-700 hover:text-blue-600 transition-all duration-300 group bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow"
+            className="flex items-center text-gray-700 hover:text-blue-600 transition-all duration-300 group bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm hover:shadow"
           >
             <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Back</span>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 capitalize">
-            <span className="bg-blue-100 text-blue-600 px-6 py-2 rounded-full">
+          <div className="text-1xl sm:text-3xl font-bold text-gray-800 capitalize">
+            <span className="bg-blue-100/90 backdrop-blur-sm text-blue-600 px-6 py-2 rounded-full shadow-sm">
               {category}
             </span>
-          </h1>
+          </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleFilterModal}
-            className={`flex items-center justify-center px-6 py-2.5 rounded-lg transition-all duration-300 shadow-sm ${
-              isFilterOpen
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <Filter size={18} className="mr-2" />
-            Filters
-          </button>
-        </div>
+        <button
+          onClick={toggleFilterModal}
+          className={`flex items-center justify-center px-6 py-2.5 rounded-lg transition-all duration-300 shadow-sm ${
+            isFilterOpen
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <Filter size={18} className="mr-2" />
+          Filters
+        </button>
       </div>
 
       {/* Statistics Section */}
       <div className="mt-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Statistics Overview</h2>
+        <div className="flex items-center justify-end mb-6">
           <button
             onClick={toggleStats}
-            className="flex items-center text-gray-600 hover:text-blue-600 transition-all duration-300 bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow"
+            className="flex items-center text-gray-600 hover:text-blue-600 transition-all duration-300 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm hover:shadow"
           >
-            <span className="mr-2 font-medium">{showStats ? 'Hide' : 'Show'} Details</span>
+            <span className="mr-2 font-medium">{showStats ? 'Hide' : 'Show'} Statistics</span>
             {showStats ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
           </button>
         </div>
 
         <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 transition-all duration-500 ${
+          className={`overflow-x-auto pb-4 transition-all duration-500 ${
             showStats ? 'opacity-100 max-h-[500px]' : 'opacity-0 max-h-0 overflow-hidden'
           }`}
         >
-          <StatCard
-            icon={AlertCircle}
-            label="Total Complaints"
-            value={statistics.totalComplaints}
-            color="border-blue-600"
-          />
-          <StatCard
-            icon={CheckCircle2}
-            label="Resolved"
-            value={statistics.resolvedComplaints}
-            color="border-green-600"
-          />
-          <StatCard
-            icon={Clock}
-            label="Unresolved"
-            value={statistics.unresolvedComplaints}
-            color="border-yellow-600"
-          />
-          <StatCard
-            icon={Eye}
-            label="Viewed"
-            value={statistics.viewedComplaints}
-            color="border-purple-600"
-          />
-          <StatCard
-            icon={EyeOff}
-            label="Not Viewed"
-            value={statistics.notViewedComplaints}
-            color="border-red-600"
-          />
+          <div className="flex flex-nowrap gap-4 min-w-full sm:grid sm:grid-cols-2 lg:grid-cols-5">
+            <StatCard
+              icon={AlertCircle}
+              label="Total Complaints"
+              value={statistics.totalComplaints}
+              color="border-blue-600"
+            />
+            <StatCard
+              icon={CheckCircle2}
+              label="Resolved"
+              value={statistics.resolvedComplaints}
+              color="border-green-600"
+            />
+            <StatCard
+              icon={Clock}
+              label="Unresolved"
+              value={statistics.unresolvedComplaints}
+              color="border-yellow-600"
+            />
+            <StatCard
+              icon={Eye}
+              label="Viewed"
+              value={statistics.viewedComplaints}
+              color="border-purple-600"
+            />
+            <StatCard
+              icon={EyeOff}
+              label="Not Viewed"
+              value={statistics.notViewedComplaints}
+              color="border-red-600"
+            />
+          </div>
         </div>
       </div>
 
