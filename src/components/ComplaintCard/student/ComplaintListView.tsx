@@ -148,7 +148,7 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
 
         {props.isFilterOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
-            <div className="bg-white rounded-xl p-6 w-full max-w-xl">
+            <div className="bg-white rounded-xl p-6 w-full max-w-sm sm:max-w-xl">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Filters</h2>
                 <button onClick={() => props.onSetIsFilterOpen(false)}>
@@ -230,7 +230,10 @@ const ComplaintListView: React.FC<ComplaintListViewProps> = (props) => {
                   Clear
                 </button>
                 <button
-                  onClick={() => props.onFilterByDateRange(props.complaintIds, props.complaintType, props.status, props.readStatus)}
+                  onClick={() => {
+                    props.onFilterByDateRange(props.complaintIds, props.complaintType, props.status, props.readStatus);
+                    props.onSetIsFilterOpen(false);
+                  }}
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
                 >
                   Apply

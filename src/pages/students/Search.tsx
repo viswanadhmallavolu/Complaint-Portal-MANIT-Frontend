@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Search, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, AlertCircle, Loader2, Info } from 'lucide-react';
 import { searchComplaint } from '../../services/apiService';
 import { Complaint } from '../../types/complaint';
 import { AttachmentGallery } from '../../components/ComplaintCard/AttachmentGallery';
-
-const categories = [
-  'Hostel',
-  'Academic',
-  'Medical',
-  'Infrastructure',
-  'Ragging',
-  'Administration'
-] as const;
-
+import { CiCircleInfo } from "react-icons/ci";
 
 function SearchPage() {
   const [complaintId, setComplaintId] = useState('');
-  const [category, setCategory] = useState<typeof categories[number]>('Hostel');
   const [complaint, setComplaint] = useState<Complaint | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false); // Add this state
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +18,19 @@ function SearchPage() {
     setIsLoading(true);
 
     try {
-      // Simulated API call
-      const data = await searchComplaint(complaintId, category);
+      let extractedCategory = '';
+      const firstChar = complaintId[0]?.toUpperCase() || '';
+      switch (firstChar) {
+        case 'A': extractedCategory = 'Academic'; break;
+        case 'B': extractedCategory = 'Administration'; break;
+        case 'C': extractedCategory = 'Hostel'; break;
+        case 'D': extractedCategory = 'Infrastructure'; break;
+        case 'E': extractedCategory = 'Medical'; break;
+        case 'F': extractedCategory = 'Ragging'; break;
+        default: extractedCategory = 'Hostel';
+      }
+      const trimmedId = complaintId.slice(1);
+      const data = await searchComplaint(trimmedId, extractedCategory);
       setComplaint(data);
       
     } catch (err) {
@@ -63,9 +65,24 @@ function SearchPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="px-6 py-8 md:p-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8 flex items-center relative group">
               <Search className="w-8 h-8 mr-3 text-blue-600" />
               Search Complaint
+              <div 
+                className="relative inline-block"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onClick={() => setShowTooltip(!showTooltip)}
+              >
+                <CiCircleInfo 
+                  className="w-5 h-5 ml-2 text-gray-500 cursor-pointer" 
+                />
+                {showTooltip && (
+                  <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 sm:translate-x-0 sm:left-0 w-48 sm:w-64 p-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg z-10">
+                    This section is helpful for quick search of the submitted complaints. Please enter the valid VALID UID which is available in your email.
+                  </div>
+                )}
+              </div>
             </h1>
 
             <form onSubmit={handleSearch} className="space-y-6">
@@ -82,21 +99,6 @@ function SearchPage() {
                     placeholder="Enter complaint ID"
                     required
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Category
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as typeof categories[number])}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
                 </div>
               </div>
 
