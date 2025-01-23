@@ -20,7 +20,7 @@ const Login = () => {
               <div className="flex justify-center mb-1">
                 <a href="https://manit.ac.in" target="_blank" rel="noreferrer">
                   <img
-                    src="public/logo/manit_sm.png"
+                    src="logo/manit_sm.png"
                     alt="MANIT Logo"
                     className="w-32 h-32"
                   />
