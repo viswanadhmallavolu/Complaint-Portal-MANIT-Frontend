@@ -11,10 +11,7 @@ const Login = () => {
         </p>
       </div>
       <div className="flex justify-center items-center">
-        <div className="bg-transparent rounded-lg overflow-hidden w-full max-w-2xl flex max-sm:flex-col-reverse">
-          <div className="w-1/2 max-sm:w-full p-4 max-md:p-2">
-            <LoginForm />
-          </div>
+        <div className="bg-transparent rounded-lg overflow-hidden w-full max-w-2xl flex max-sm:flex-col">
           <div className="w-1/2 max-sm:w-full p-4 max-md:p-2 text-white flex flex-col justify-center">
             <div>
               <div className="flex justify-center mb-1">
@@ -33,6 +30,9 @@ const Login = () => {
                 Please Login <br /> using your LDAP ID and Password
               </p>
             </div>
+          </div>
+          <div className="w-1/2 max-sm:w-full p-4 max-md:p-2">
+            <LoginForm />
           </div>
         </div>
       </div>
