@@ -23,6 +23,32 @@ export default {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
       },
+      animation: {
+        'gradient-x': 'gradient-x 15s ease infinite',
+        'text': 'text 5s ease infinite',
+      },
+      keyframes: {
+        'gradient-x': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          },
+        },
+        'text': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': '0% 50%'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': '100% 50%'
+          },
+        },
+      },
     },
   },
   plugins: [],
