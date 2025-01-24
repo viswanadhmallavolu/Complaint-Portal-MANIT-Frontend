@@ -5,174 +5,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import student_api from "../api/student-api";
 import { useNavigate } from "react-router-dom";
-
-const InputField = ({
-  label,
-  name,
-  value,
-  onChange,
-  error,
-  type = "text",
-  icon: Icon,
-  readOnly = false,
-  required = false,
-}) => (
-  <div className="mb-4 relative">
-    <label htmlFor={name} className="block text-gray-700 font-semibold mb-2">
-      {label}
-    </label>
-    <div className="relative">
-      {Icon && (
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-          <Icon size={20} />
-        </div>
-      )}
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        readOnly={readOnly}
-        required={required}
-        className={`w-full px-4 py-3 pl-${Icon ? "10" : "4"} border rounded-lg 
-          focus:outline-none focus:ring-2 focus:ring-blue-500 
-          transition duration-300 ease-in-out 
-          bg-white
-          border-gray-300
-          text-gray-900 placeholder-gray-500 ${readOnly ? "bg-gray-100 cursor-not-allowed" : ""
-          }`}
-        placeholder={label}
-      />
-    </div>
-    {error && (
-      <>
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500">
-          <AlertCircle size={20} />
-        </div>
-        <p className="text-red-500 mt-1 text-sm">{error}</p>
-      </>
-    )}
-  </div>
-);
-
-const SelectField = ({
-  label,
-  name,
-  value,
-  onChange,
-  options,
-  error,
-  required = false,
-}) => (
-  <div className="mb-4">
-    <label htmlFor={name} className="block text-gray-700 font-semibold mb-2">
-      {label}
-    </label>
-    <select
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      required={required}
-      className="w-full px-4 py-3 border rounded-lg 
-        focus:outline-none focus:ring-2 focus:ring-blue-500 
-        transition duration-300 ease-in-out 
-        bg-white 
-        border-gray-300 
-        text-gray-900"
-    >
-      <option value="" className="text-gray-500">
-        Select an option
-      </option>
-      {options.map((option) => (
-        <option key={option} value={option} className="text-gray-900">
-          {option}
-        </option>
-      ))}
-    </select>
-    {error && (
-      <p className="text-red-500 mt-1 text-sm flex items-center">
-        <AlertCircle size={16} className="mr-2" /> {error}
-      </p>
-    )}
-  </div>
-);
-
-const TextareaField = ({
-  label,
-  name,
-  value,
-  onChange,
-  error,
-  rows = 4,
-  required = false,
-}) => (
-  <div className="mb-4">
-    <label htmlFor={name} className="block text-gray-700 font-semibold mb-2">
-      {label}
-    </label>
-    <textarea
-      id={name}
-      name={name}
-      value={value}
-      rows={rows}
-      onChange={onChange}
-      required={required}
-      className="w-full px-4 py-3 border rounded-lg 
-        focus:outline-none focus:ring-2 focus:ring-blue-500 
-        transition duration-300 ease-in-out 
-        bg-white 
-        border-gray-300 
-        text-gray-900 placeholder-gray-500"
-      placeholder={`Enter ${label.toLowerCase()}`}
-    />
-    {error && (
-      <p className="text-red-500 mt-1 text-sm flex items-center">
-        <AlertCircle size={16} className="mr-2" /> {error}
-      </p>
-    )}
-  </div>
-);
-
-// Update FilePreview component
-const FilePreview = ({ file, onRemove, index }) => {
-  const isImage = file.type.startsWith('image/');
-  const MAX_PREVIEW_SIZE = 150; // Reduced preview size
-
-  return (
-    <div className="relative group bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:border-blue-500 transition-all duration-300">
-      <div style={{ width: MAX_PREVIEW_SIZE, height: MAX_PREVIEW_SIZE }} className="relative">
-        {isImage ? (
-          <img
-            src={file.preview}
-            alt={file.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-50">
-            <FileText size={32} className="text-gray-400" />
-          </div>
-        )}
-      </div>
-      <div className="p-2 bg-white">
-        <p className="text-xs text-gray-700 truncate" title={file.name}>
-          {file.name}
-        </p>
-        <p className="text-xs text-gray-500">
-          {(file.size / 1024).toFixed(1)} KB
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={() => onRemove(index)}
-        className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-600"
-      >
-        <Trash2 size={12} />
-      </button>
-    </div>
-  );
-};
+import DOMPurify from "dompurify";
+import InputField from "./studentForm/InputField";
+import SelectField from "./studentForm/SelectField";
+import TextareaField from "./studentForm/TextareaField";
+import FilePreview from "./studentForm/FilePreview";
 
 const ComplaintForm = () => {
   const api = student_api;
@@ -241,12 +78,27 @@ const ComplaintForm = () => {
     [initialFormData, uploadedFiles]
   );
 
-  // Introduce MAX_FILE_SIZE and modify handleChange
+  const sanitizeInput = (value) => {
+    return DOMPurify.sanitize(value, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
+    });
+  };
+
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB max file size
+  const MAX_FILE_COUNT = 10;
 
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
+    if (!csrfToken) {
+      toast.error("Missing CSRF token. Please refresh the page.");
+      return;
+    }
     if (name === "attachments") {
+      if (uploadedFiles.length + e.target.files.length > MAX_FILE_COUNT) {
+        toast.error(`You can only upload up to ${MAX_FILE_COUNT} files.`);
+        return;
+      }
       const validFiles = Array.from(files).filter(file => {
         if (file.size > MAX_FILE_SIZE) {
           toast.error(`File ${file.name} is too large. Maximum size is 5MB`);
@@ -318,12 +170,18 @@ const ComplaintForm = () => {
         }));
       });
     } else {
+      const rawValue = e.target.value;
+      if (rawValue.length > 500) {
+        toast.error("Input is too long.");
+        return;
+      }
+      const sanitizedValue = sanitizeInput(rawValue);
       setFormData(prevData => ({
         ...prevData,
-        [name]: value
+        [name]: sanitizedValue
       }));
     }
-  }, []);
+  }, [uploadedFiles, csrfToken]);
 
   const removeFile = useCallback(
     (index) => {
@@ -767,7 +625,7 @@ const ComplaintForm = () => {
                   className="hidden"
                   name="attachments"
                   onChange={handleChange}
-                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  accept="image/*,.pdf"
                 />
               </label>
             </div>
