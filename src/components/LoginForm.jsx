@@ -32,7 +32,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex flex-col p-8 rounded-xl shadow-xl bg-white/10 backdrop-blur-md backdrop-filter border border-white/20 text-violet-500">
+    <div className="w-full p-8 rounded-xl shadow-xl bg-white/10 backdrop-blur-md backdrop-filter border border-white/20 text-violet-500">
       <h1 className="my-6 text-3xl font-semibold text-center text-white">Login</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
