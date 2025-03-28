@@ -140,11 +140,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
         <div className="space-y-6">
           <ComplaintDetails complaint={complaint} />
 
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
-            <p className="text-gray-700 leading-relaxed">{complaint.description}</p>
-          </div>
-
+         
 
           {complaint.AdminRemarks && (
             <div className="bg-gray-50 rounded-lg p-4">

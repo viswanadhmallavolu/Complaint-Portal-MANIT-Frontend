@@ -502,6 +502,7 @@ const ComplaintForm = () => {
               "Bathroom",
               "Room",
               "Noise",
+              "Internet",
               "Other",
             ]}
             error={errors.complainType}
@@ -533,6 +534,7 @@ const ComplaintForm = () => {
               "Library",
               "Sports",
               "Lab",
+              "Internet",
               "Other",
             ]}
             error={errors.complainType}

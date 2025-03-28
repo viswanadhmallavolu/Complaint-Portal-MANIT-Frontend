@@ -99,6 +99,11 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
           />
         )}
         
+        <div className="col-span-full mb-4">
+          <label className="text-sm font-semibold text-gray-700">Description</label>
+          <p className="mt-1 text-md text-gray-600">{complaint.description}</p>
+        </div>
+        
         {(() => {
           switch (complaint.category) {
             case 'Hostel':
@@ -215,10 +220,10 @@ export const ComplaintDetails: React.FC<ComplaintDetailsProps> = ({ complaint, i
 
   return (
     <div className="bg-gradient-to-br from-white via-gray-50 to-blue-50 shadow-xl rounded-2xl p-8 overflow-y-auto max-h-screen border border-gray-100">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+      {/* <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
         <ClipboardList className="text-blue-600" />
          Category : {category} 
-      </h2>
+      </h2> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {renderDetails()}
       </div>

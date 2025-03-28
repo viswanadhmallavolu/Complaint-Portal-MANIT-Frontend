@@ -8,7 +8,7 @@ import  student_api  from '../api/student-api'; // Import the axios instance
 
 
 
-export const forwardMail = async ({
+export const SendFeedBack = async ({
     scholarNumber,
     name,
     stream,

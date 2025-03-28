@@ -6,10 +6,8 @@ import { getComplaintsByDateRange_Admin, updateComplaintStatusAdmin, getComplain
 import { Complaint, ComplaintCategory, ReadStatus, ComplaintFilters } from '../../types/complaint';
 import ComplaintHeader from '../../components/ComplaintHeader';
 import ErrorBoundary from '../../components/ErrorBoundary';
-
 import { VariableSizeList as List } from 'react-window';
 import { calculateItemHeight } from '../../components/Utility/heightCalculator';
-
 import { toast } from 'react-toastify';
 
 

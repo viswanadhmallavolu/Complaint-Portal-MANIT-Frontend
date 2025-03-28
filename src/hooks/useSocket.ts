@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { AnalyticsData } from "../types/analytics";
 import { SOCKET_CONFIG } from "../constants/socket";
-import { useLocation , useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { COWDashboardData, WardenDashboardData } from "../types/dashboard";
+
 
 const MOCK_DATA: AnalyticsData = {
 	medicalData: {
@@ -31,8 +33,18 @@ export const useSocket = (url: string) => {
 	const [resolution, setResolution] = useState<any | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const socketRef = useRef<Socket | null>(null);
+	const [socketInstance, setSocketInstance] = useState<Socket | null>(null);
 	const reconnectAttempts = useRef(0);
 	const [categoryStats, setCategoryStats] = useState<any | null>(null);
+	const [cowDashboardData, setCowDashboardData] =
+		useState<COWDashboardData | null>(null);
+	const [wardenDashboardData, setWardenDashboardData] =
+		useState<WardenDashboardData | null>(null);
+	const categoryInterval = useRef<NodeJS.Timeout | null>(null);
+	const lastHeartbeat = useRef(Date.now());
+	const heartbeatInterval = useRef<NodeJS.Timeout | null>(null);
+	const connectionMonitor = useRef<NodeJS.Timeout | null>(null);
+
 	useEffect(() => {
 		const handleAnalyticsData = (data: AnalyticsData) => {
 			setAnalyticsData(data);
@@ -43,21 +55,54 @@ export const useSocket = (url: string) => {
 				socketRef.current = io(url, {
 					reconnectionAttempts: SOCKET_CONFIG.maxReconnectAttempts,
 					reconnectionDelay: SOCKET_CONFIG.reconnectDelay,
-					timeout: SOCKET_CONFIG.timeout,
-					transports: ["websocket", "polling", "flashsocket"],
-				});
-
-				socketRef.current.on("ping", () =>{
-					socketRef.current?.emit("pong")
+					timeout: 30000,
+					withCredentials:true
+					// transports: ["websocket", "polling"],
 				});
 
 				socketRef.current.on("connect", () => {
+					console.log("Socket connected successfully");
+					setSocketInstance(socketRef.current);
 					setIsConnected(true);
 					setError(null);
 					reconnectAttempts.current = 0;
+					lastHeartbeat.current = Date.now();
+
+					// Set up heartbeat monitoring
+					heartbeatInterval.current = setInterval(() => {
+						socketRef.current?.emit("pong");
+					}, 25000);
+
+					// Monitor connection health
+					connectionMonitor.current = setInterval(() => {
+						if (Date.now() - lastHeartbeat.current > 60000) {
+							console.log("Connection dead - no heartbeat");
+							socketRef.current?.disconnect();
+							setIsConnected(false);
+						}
+					}, 30000);
+
+					// Emit initial data request for COW dashboard
+					if (location.pathname === "/cow/dashboard") {
+						console.log("Requesting COW dashboard data");
+						socketRef.current?.emit("cowDashboardData");
+					}
+
+					// Add warden dashboard initial data request
+					if (location.pathname.includes("/admin/hostel/warden/dashboard")) {
+						console.log("Requesting Warden dashboard data");
+						socketRef.current?.emit("getWardenDashboardData");
+					}
+				});
+
+				// Handle ping from server
+				socketRef.current.on("ping", () => {
+					lastHeartbeat.current = Date.now();
+					socketRef.current?.emit("pong");
 				});
 
 				socketRef.current.on("disconnect", () => {
+					console.log("Socket disconnected");
 					setIsConnected(false);
 				});
 
@@ -67,53 +112,90 @@ export const useSocket = (url: string) => {
 					socketRef.current.on("setResolution", (data: any) => {
 						setResolution(data);
 					});
-				} else if ([
-					"/admin/complaints/hostel",
-					"/admin/complaints/medical",
-					"/admin/complaints/infrastructure",
-					"/admin/complaints/academic",
-					"/admin/complaints/administration",
-					"/admin/complaints/ragging"
-				].includes(location.pathname)) {
-					setInterval(()=>{socketRef.current?.emit(`${category}Stats`)},5000)
-			        
+				} else if (location.pathname === "/cow/dashboard") {
+					// Set up interval for COW dashboard data updates
+					categoryInterval.current = setInterval(() => {
+						console.log("Requesting updated COW dashboard data");
+						socketRef.current?.emit("cowDashboardData");
+					}, 5000);
+
+					socketRef.current.on(
+						"setCowDashboardData",
+						(data: COWDashboardData) => {
+							console.log("Received COW dashboard data:", data);
+							setCowDashboardData(data);
+						}
+					);
+				} else if (
+					[
+						"/admin/complaints/hostel",
+						"/admin/complaints/medical",
+						"/admin/complaints/infrastructure",
+						"/admin/complaints/academic",
+						"/admin/complaints/administration",
+						"/admin/complaints/ragging",
+					].includes(location.pathname)
+				) {
+					categoryInterval.current = setInterval(() => {
+						socketRef.current?.emit(`${category}Stats`);
+					}, 5000);
+
 					socketRef.current.on(`set${category}Stats`, (data: any) => {
 						setCategoryStats(data);
-						console.log(data)
 					});
+				} else if (location.pathname.includes("/warden/dashboard")) {
+					// Changed the event listener name to match the backend for the new warden dashboard route
+					socketRef.current.on(
+						"setWardenDashboardData",
+						(data: WardenDashboardData) => {
+							console.log("Received Warden dashboard data:", data);
+							setWardenDashboardData(data);
+						}
+					);
+
+					// Set up interval for warden dashboard data updates
+					categoryInterval.current = setInterval(() => {
+						console.log("Requesting updated Warden dashboard data");
+						socketRef.current?.emit("getWardenDashboardData",);
+					}, 5000);
 				}
 
-				socketRef.current.on("connect_error", () => {
+				socketRef.current.on("connect_error", (error: any) => {
+					console.error("Socket connect error:", error);
 					reconnectAttempts.current += 1;
-
-					if (reconnectAttempts.current >= SOCKET_CONFIG.maxReconnectAttempts) {
-						setError("Unable to connect to server");
-						// Fall back to mock data in development
-						if (true) {
-							console.info("Using mock data for development");
-							setAnalyticsData(MOCK_DATA);
-						}
-						socketRef.current?.disconnect();
-					}
 				});
 			} catch (err) {
-				console.error("Failed to initialize socket connection", err);
+				console.error("Failed to initialize socket connection:", err);
 				setError("Failed to initialize socket connection");
-				let check = true;
-				if (check) {
-					setAnalyticsData(MOCK_DATA);
-				}
+				setAnalyticsData(MOCK_DATA);
 			}
 		};
 
 		connectSocket();
 
-		// Cleanup on unmount
 		return () => {
-			console.log("Disconnecting socket");
+			console.log("Cleaning up socket connection");
+			if (categoryInterval.current) {
+				clearInterval(categoryInterval.current);
+			}
+			if (heartbeatInterval.current) {
+				clearInterval(heartbeatInterval.current);
+			}
+			if (connectionMonitor.current) {
+				clearInterval(connectionMonitor.current);
+			}
 			socketRef.current?.disconnect();
 		};
-	}, [url]);
+	}, [url, location.pathname, category]);
 
-	return { isConnected, analyticsData, resolution, error, categoryStats };
+	return {
+		isConnected,
+		analyticsData,
+		resolution,
+		error,
+		categoryStats,
+		socket: socketInstance,
+		cowDashboardData,
+		wardenDashboardData,
+	};
 };

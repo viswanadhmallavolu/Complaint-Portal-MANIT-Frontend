@@ -22,45 +22,45 @@ import { toast } from 'react-toastify';
 const Profile = () => {
   const api = student_api;
   const { auth } = useAuth();
-  const user = auth?.user || auth?.userData || null;  // Try both possible locations
+  const user = auth?.user || auth?.userData || null;
   const [complaintData, setComplaintData] = useState(null);
-  const [loading, setLoading] = useState(!user);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get('/profile',{withCredentials: true});
-        setComplaintData({
-          registered: response.data.registered,
-          resolved: response.data.resolved,
-          unresolved: response.data.unresolved,
-          hostel:response.data.hostel,
-          academic:response.data.academic,
-          medical:response.data.medical,
-          ragging:response.data.ragging,
-          infrastructure:response.data.infrastructure,
-          administration:response.data.administration,
-        });
-      } catch (err) {
-        if (err.response?.status === 401) {
-          if (typeof auth?.setAuth === 'function') {
-            auth.setAuth(null);
-            localStorage.removeItem('auth');
-            navigate('/');
-          }
-        } else {
-          const errorMessage =
-            err.response?.data?.message || err.message || 'An error occurred';
-          toast.error(errorMessage);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUserData();
-  }, [api, navigate, auth]);
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await api.get('/profile', { withCredentials: true });
+      setComplaintData({
+        registered: response.data.registered,
+        resolved: response.data.resolved,
+        unresolved: response.data.unresolved,
+        hostel: response.data.hostel,
+        academic: response.data.academic,
+        medical: response.data.medical,
+        ragging: response.data.ragging,
+        infrastructure: response.data.infrastructure,
+        administration: response.data.administration,
+      });
+    } catch (err) {
+      if (err.response?.status === 401) {
+        if (typeof auth?.setAuth === 'function') {
+          auth.setAuth(null);
+          localStorage.removeItem('auth');
+          navigate('/');
+        }
+      } else {
+        const errorMessage =
+          err.response?.data?.message || err.message || 'An error occurred';
+        toast.error(errorMessage);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -116,7 +116,6 @@ const Profile = () => {
                 </h2>
                 <div className="space-y-4">
                   <InfoItem icon={Home} label="Address" value={user?.postalAddress} />
-                  
                   <InfoItem icon={Users} label="Role" value={user?.role} />
                 </div>
               </div>
@@ -150,7 +149,7 @@ const Profile = () => {
                   loading={!complaintData}
                 />
               </div>
-              
+
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Complaints by Category
               </h3>

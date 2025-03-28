@@ -3,11 +3,8 @@ import { get_Complaint_byId, get_logs } from '../../services/apiService';
 import { LogsSection } from '../../components/Utility/LogsSection';
 import { ComplaintSection } from '../../components/Utility/ComplaintSection';
 
-
-
 const Utils = () => {
   const [category, setCategory] = useState('');
-  const [category2,setCategory2] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [complaintId, setComplaintId] = useState('');
@@ -32,16 +29,6 @@ const Utils = () => {
     }
   };
 
-  const handleFetchComplaint = async () => {
-    try {
-      const data = await get_Complaint_byId(category2, complaintId);
-      console.log("The complaint data is : " , data)
-      setComplaint(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -55,12 +42,9 @@ const Utils = () => {
         <ComplaintSection
           complaintId={complaintId}
           setComplaintId={setComplaintId}
-          category={category2}
-          setCategory={setCategory2}
-          onFetch={handleFetchComplaint}
           complaint={complaint}
+          setComplaint={setComplaint}
         />
-        
       </div>
     </div>
   );

@@ -41,6 +41,7 @@ export type HostelComplaintType =
   | 'bathroom'
   | 'room'
   | 'noise'
+  |'internet'
   | 'Other';
 
 // Medical types

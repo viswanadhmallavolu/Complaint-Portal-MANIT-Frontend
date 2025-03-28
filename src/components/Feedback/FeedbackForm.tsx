@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { Send } from 'lucide-react';
 import FileUpload from './FileUpload';
-import { forwardMail } from '../../services/feedbackService';
+import { SendFeedBack } from '../../services/feedbackService';
 import { toast, ToastContainer } from 'react-toastify';
 
 interface FeedbackData {
@@ -23,12 +23,14 @@ export default function FeedbackForm() {
     department: '',
   });
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const { scholarNumber, name, stream, year, department, description } = formData;
-      const success = await forwardMail({
+      const success = await SendFeedBack({
         scholarNumber,
         name,
         stream,
@@ -53,6 +55,8 @@ export default function FeedbackForm() {
       }
     } catch (error) {
       toast.error('Failed to submit feedback.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -223,10 +227,11 @@ export default function FeedbackForm() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
           >
             <Send className="w-4 h-4" />
-            Submit Feedback
+            {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
           </button>
         </div>
       </form>
