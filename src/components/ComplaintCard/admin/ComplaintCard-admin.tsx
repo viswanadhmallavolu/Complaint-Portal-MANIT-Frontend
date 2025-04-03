@@ -47,9 +47,11 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
   const handleModalOpen = () => {
     setIsModalOpen(true);
     if (complaint.readStatus !== ReadStatus.Viewed) {
-      onUpdate(complaint.id, { readStatus: ReadStatus.Viewed }).catch((error) => {
-        console.error('Error updating read status:', error);
-      });
+      setTimeout(() => {
+        onUpdate(complaint.id, { readStatus: ReadStatus.Viewed }).catch((error) => {
+          console.error('Error updating read status:', error);
+        });
+      }, 0);
     }
   };
 
@@ -63,7 +65,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 inline-block">
             {(() => {
               const days = Math.floor(
-                (new Date().setHours(0, 0, 0, 0) - new Date(complaint.dateSubmitted).setHours(0, 0, 0, 0)) 
+                (new Date().setHours(0, 0, 0, 0) - new Date(complaint.dateSubmitted).setHours(0, 0, 0, 0))
                 / (1000 * 60 * 60 * 24)
               );
               return days <= 0 ? 'Today' : `${days} days ago`;
@@ -88,7 +90,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
           onClick={handleModalOpen}
           className="flex-shrink-0 flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm"
         >
-          View 
+          View
         </button>
 
         <button
@@ -98,7 +100,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <MessageSquare size={16} className="mr-2" />
           Add Remarks
         </button>
-        
+
         {complaint.status !== 'resolved' && (
           <button
             onClick={handleResolveClick}
