@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { AlertCircle, Upload, Trash2, FileText } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// Replace direct toast import with our useToast hook
+import { useToast } from "../context/ToastContext";
 import student_api from "../api/student-api";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
@@ -15,6 +15,8 @@ const ComplaintForm = () => {
   const api = student_api;
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  // Use our toast context
+  const toast = useToast();
   const user = auth.userData;
   const initialFormData = useMemo(
     () => ({
@@ -91,17 +93,23 @@ const ComplaintForm = () => {
   const handleChange = useCallback((e) => {
     const { name, value, files } = e.target;
     if (!csrfToken) {
-      toast.error("Missing CSRF token. Please refresh the page.");
+      toast.error("Missing CSRF token. Please refresh the page.", {
+        toastId: "csrf-token-missing"
+      });
       return;
     }
     if (name === "attachments") {
       if (uploadedFiles.length + e.target.files.length > MAX_FILE_COUNT) {
-        toast.error(`You can only upload up to ${MAX_FILE_COUNT} files.`);
+        toast.error(`You can only upload up to ${MAX_FILE_COUNT} files.`, {
+          toastId: "max-file-count-exceeded"
+        });
         return;
       }
       const validFiles = Array.from(files).filter(file => {
         if (file.size > MAX_FILE_SIZE) {
-          toast.error(`File ${file.name} is too large. Maximum size is 5MB`);
+          toast.error(`File ${file.name} is too large. Maximum size is 5MB`, {
+            toastId: `file-too-large-${file.name}`
+          });
           return false;
         }
         return true;
@@ -118,7 +126,7 @@ const ComplaintForm = () => {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                
+
                 // Calculate new dimensions while maintaining aspect ratio
                 const MAX_DIMENSION = 800;
                 if (width > height && width > MAX_DIMENSION) {
@@ -133,7 +141,7 @@ const ComplaintForm = () => {
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                
+
                 // Convert to blob with reduced quality
                 canvas.toBlob(
                   (blob) => {
@@ -172,7 +180,9 @@ const ComplaintForm = () => {
     } else {
       const rawValue = e.target.value;
       if (rawValue.length > 500) {
-        toast.error("Input is too long.");
+        toast.error("Input is too long.", {
+          toastId: "input-too-long"
+        });
         return;
       }
       const sanitizedValue = sanitizeInput(rawValue);
@@ -245,7 +255,9 @@ const ComplaintForm = () => {
       if (Object.keys(validationErrors).length === 0) {
         setIsSubmitting(true);
         try {
-          toast.info("Submitting complaint...");
+          toast.info("Submitting complaint...", {
+            toastId: "submitting-complaint"
+          });
           const formDataToSend = new FormData();
           Object.keys(formData).forEach((key) => {
             if (key === "attachments" && formData.attachments.length > 0) {
@@ -270,7 +282,9 @@ const ComplaintForm = () => {
           );
 
           if (response.data) {
-            toast.success("Complaint submitted successfully!");
+            toast.success("Complaint submitted successfully!", {
+              toastId: "complaint-submitted"
+            });
             uploadedFiles.forEach((file) => {
               if (file.preview) {
                 URL.revokeObjectURL(file.preview);
@@ -287,7 +301,8 @@ const ComplaintForm = () => {
             navigate("/");
           } else {
             toast.error(
-              error.response?.data?.message || "Error submitting complaint"
+              error.response?.data?.message || "Error submitting complaint",
+              { toastId: "complaint-submit-error" }
             );
           }
         } finally {
@@ -295,7 +310,9 @@ const ComplaintForm = () => {
         }
       } else {
         setErrors(validationErrors);
-        Object.values(validationErrors).forEach((msg) => toast.error(msg));
+        Object.entries(validationErrors).forEach(([field, msg]) =>
+          toast.error(msg, { toastId: `validation-error-${field}` })
+        );
       }
     },
     [
@@ -678,7 +695,6 @@ const ComplaintForm = () => {
             </div>
           )}
         </form>
-        <ToastContainer />
       </div>
     </div>
   );

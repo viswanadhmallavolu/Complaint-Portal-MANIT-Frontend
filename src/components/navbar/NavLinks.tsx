@@ -1,70 +1,75 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { UserRole } from '../../types/roles/UserRole';
+import { Home, User, MessageSquare, Search, Phone, MessageCircle, LayoutDashboard, Settings } from 'lucide-react';
 
-// Define the list of warden roles.
 const WARDEN_ROLES = ["H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8", "H9", "H10", "H11", "H12"];
 
 interface NavLinksProps {
-  role: UserRole;
+  role: string;
 }
 
 export const NavLinks: React.FC<NavLinksProps> = ({ role }) => {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `${isActive ? 'border-b-2 border-white' : 'border-b-2 border-transparent'} block py-2`;
+    `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
+      isActive
+        ? 'bg-indigo-500/20 text-indigo-400'
+        : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+    }`;
 
-  if (role === 'student') {
-    return (
-      <div className="flex sm:flex-row flex-col sm:gap-5 gap-2">
-        <NavLink to="/student/home" className={linkClass}>Home</NavLink>
-        <NavLink to="/student/profile" className={linkClass}>Profile</NavLink>
-        <NavLink to="/student/complaint" className={linkClass}>Complain</NavLink>
-        <NavLink to="/student/search" className={linkClass} title='Search a Complaint Quickly'>Search</NavLink>
-        <NavLink to="/student/contacts" className={linkClass} title='Contacts of Authority'>Contacts</NavLink>
-        <NavLink to="/student/feedback" className={linkClass} title='Submit Feedback'>Feedback</NavLink>
-      </div>
-    );
-  }
+  const getNavConfig = () => {
+    switch (role) {
+      case 'student':
+        return [
+          { to: '/student/home', icon: <Home size={20} />, label: 'Home' },
+          { to: '/student/profile', icon: <User size={20} />, label: 'Profile' },
+          { to: '/student/complaint', icon: <MessageSquare size={20} />, label: 'Raise Ticket' },
+          { to: '/student/search', icon: <Search size={20} />, label: 'Search' },
+          { to: '/student/contacts', icon: <Phone size={20} />, label: 'Contacts' },
+          { to: '/student/feedback', icon: <MessageCircle size={20} />, label: 'Feedback' }
+        ];
+      case 'electric_admin':
+      case 'internet_admin':
+      case 'medical_admin':
+        return [
+          { to: `/${role}/complaints`, icon: <MessageSquare size={20} />, label: 'Complaints' },
+          { to: `/${role}/search`, icon: <Search size={20} />, label: 'Search' }
+        ];
+      case 'cow':
+        return [
+          { to: `/${role}/dashboard`, icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+          { to: `/${role}/complaints`, icon: <MessageSquare size={20} />, label: 'Complaints' },
+          { to: `/${role}/search`, icon: <Search size={20} />, label: 'Search' }
+        ];
+      case 'admin':
+        return [
+          { to: '/admin/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+          { to: '/admin/complaints', icon: <MessageSquare size={20} />, label: 'Complaints' },
+          { to: '/admin/utils', icon: <Settings size={20} />, label: 'Utils' }
+        ];
+      default:
+        if (WARDEN_ROLES.includes(role)) {
+          return [
+            { to: `/${role}/complaints`, icon: <MessageSquare size={20} />, label: 'Complaints' },
+            { to: `/${role}/warden/dashboard`, icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+            { to: `/${role}/search`, icon: <Search size={20} />, label: 'Search' }
+          ];
+        }
+        return [];
+    }
+  };
 
-  if (role === 'electric_admin' || role === 'internet_admin' || role === 'medical_admin') {
-    return (
-      <div className="flex sm:flex-row flex-col sm:gap-5 gap-2">
-        <NavLink to={`/${role}/complaints`} className={linkClass}>Complaints</NavLink>
-        <NavLink to={`/${role}/search`} className={linkClass}>Search</NavLink>
-      </div>
-    );
-  }
-  if (role === 'cow') {
-    return (
-      <div className="flex sm:flex-row flex-col sm:gap-5 gap-2">
-        <NavLink to={`/${role}/dashboard`} className={linkClass}>Dashboard</NavLink>
-        <NavLink to={`/${role}/complaints`} className={linkClass}>Complaints</NavLink>
-        <NavLink to={`/${role}/search`} className={linkClass}>Search</NavLink>
-      </div>
-    );
+  const navItems = getNavConfig();
 
-  }
-
-  // Check if the role is one of the warden roles.
-  if (role && WARDEN_ROLES.includes(role)) {
-    return (
-      <div className="flex sm:flex-row flex-col sm:gap-5 gap-2">
-        <NavLink to={`/${role}/complaints`} className={linkClass}>Complaints</NavLink>
-        <NavLink to={`/${role}/warden/dashboard`} className={linkClass}>Dashboard</NavLink>
-        <NavLink to={`/${role}/search`} className={linkClass}>Search</NavLink>
-      </div>
-    );
-  }
-
-  if (role === 'admin') {
-    return (
-      <div className="flex sm:flex-row flex-col sm:gap-5 gap-2">
-        <NavLink to="/admin/dashboard" className={linkClass}>Dashboard</NavLink>
-        <NavLink to="/admin/complaints" className={linkClass}>Complaints</NavLink>
-        <NavLink to="/admin/utils" className={linkClass}>Utils</NavLink>
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div className="flex md:flex-row flex-col md:items-center md:space-x-1 space-y-1 md:space-y-0">
+      {navItems.map((item) => (
+        <NavLink key={item.to} to={item.to} className={linkClass}>
+          {item.icon}
+          <span>{item.label}</span>
+        </NavLink>
+      ))}
+    </div>
+  );
 };
+
+export default NavLinks;

@@ -253,22 +253,27 @@ export const deleteComplaints = async (
 	}
 };
 
-export const searchComplaint=async (id:string,category:string) :Promise<Complaint>=>{
-	const response=await student_api.get(`/complain/search/${category.toLowerCase()}?complainId=${id}`)
+export const searchComplaint = async (
+	id: string,
+	category: string
+): Promise<Complaint> => {
+	const response = await student_api.get(
+		`/complain/search/${category.toLowerCase()}?complainId=${id}`
+	);
 	return mapComplaint(response.data.complaint);
-}
+};
 
 export const getComplaintsByDateRange = async (
 	category: ComplaintCategory,
 	startDate: string,
 	endDate: string,
-	filters : any,
+	filters: any,
 	role: string
 ): Promise<Complaint[]> => {
 	try {
 		console.log("Fetching complaints by date range:", startDate, " ", endDate);
 		const api = getApi(role);
-		const {complaintIds,complaintType,status,readStatus}=filters;
+		const { complaintIds, complaintType, status, readStatus } = filters;
 		const response = await api.get<{ complaints: any[] }>(
 			`/complain/get-complaints-date/${category}?startDate=${startDate}&endDate=${endDate}`,
 			{
@@ -293,7 +298,7 @@ export const getComplaintStatistics_CategoryWise = async (category: string) => {
 		const response = await admin_api.get(`/complaints/stats/${category}`, {
 			withCredentials: true,
 		});
-		console.log(response.data);
+		console.log("The are the complaint Stats : ", response.data);
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching complaints statistics:", error);
@@ -342,12 +347,14 @@ export const updateComplaintStatusAdmin = async (
 	complaintId: string,
 	newStatus: string | null
 ) => {
-	console.log("Sending the stus to be updated as  in the: ", newStatus);
-	await admin_api.put(
+	console.log("Sending the status to be updated as: ", newStatus);
+	const res = await admin_api.put(
 		`/complaints/status/${category}`,
 		{ id: complaintId, status: newStatus?.toLowerCase() },
 		{ withCredentials: true }
 	);
+	console.log("Response from the backend: ", res.data);
+	return res.data;
 };
 
 export const updateComplaintRemarksAdmin = async (
@@ -366,15 +373,15 @@ export const updateComplaintRemarksAdmin = async (
 	}
 
 	try {
-		console.log(category)
+		console.log(category);
 		const response = await admin_api.put(
-			`/complaints/remarks/${category}`, 
-			formData, 
+			`/complaints/remarks/${category}`,
+			formData,
 			{
-			withCredentials: true,
-			headers: {
-				"Content-Type": "multipart/form-data"
-			}
+				withCredentials: true,
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
 			}
 		);
 		return response.data;
@@ -391,7 +398,10 @@ export const get_Complaint_byId = async (
 	const response = await admin_api.get(
 		`/utility/${category}?id=${complaintId}`
 	);
-	console.log("This is the complaint upon request by admin : " , mapComplaint(response.data.complaint));
+	console.log(
+		"This is the complaint upon request by admin : ",
+		mapComplaint(response.data.complaint)
+	);
 	return mapComplaint(response.data.complaint);
 };
 

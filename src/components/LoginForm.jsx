@@ -1,97 +1,198 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { User, Lock, ShieldAlert, EyeOff, Eye, AlertCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 const LoginForm = () => {
-  const { login, isLoading } = useAuth();
-  const [username, setUsername] = useState("");
+  const [ldapId, setLdapId] = useState("");
   const [password, setPassword] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
+  const { auth, login, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (auth) {
+      if (auth.role === "student") {
+        navigate("/student/home");
+      } else if (auth.role === "admin") {
+        navigate("/admin/complaints");
+      } else if (auth.role === "cow") {
+        navigate("/cow/dashboard");
+      } else if (["electric_admin", "internet_admin", "medical_admin"].includes(auth.role)) {
+        navigate(`/${auth.role}/complaints`);
+      } else if (auth.role?.startsWith("H")) {
+        // Warden roles (H1, H2, etc.)
+        navigate(`/${auth.role}/warden/dashboard`);
+      }
+    }
+  }, [auth, navigate]);
+
+  const toggleIsAdmin = useCallback(() => {
+    setIsAdminLogin(!isAdminLogin);
+  }, [isAdminLogin]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const validateForm = () => {
+    if (!ldapId.trim()) {
+      toast.error("Please enter your LDAP ID", { toastId: "ldap-required" });
+      return false;
+    }
+    if (!password.trim()) {
+      toast.error("Please enter your password", { toastId: "password-required" });
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError("Username and Password are required");
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      setError("");
-      await login(username, password, isAdmin);
-    } catch (err) {
-      setError("Invalid credentials. Please try again.");
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      await login(ldapId, password, isAdminLogin);
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 
   return (
-    <div className="w-full p-8 rounded-xl shadow-xl bg-white/10 backdrop-blur-md backdrop-filter border border-white/20 text-violet-500">
-      <h1 className="my-6 text-3xl font-semibold text-center text-white">Login</h1>
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl p-5 sm:p-8 w-full max-w-md mx-auto transition-all duration-300 hover:shadow-blue-900/20 border border-white/50">
+      <div className="mb-4 sm:mb-6 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">
+          {isAdminLogin ? "Admin Access" : "Student Login"}
+        </h2>
+        <p className="text-gray-500 text-xs sm:text-sm">
+          {isAdminLogin
+            ? "Authorized personnel only"
+            : "Access your account to manage complaints"}
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="relative group">
-          <input
-            className="w-full py-3 px-4 text-white bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:border-blue-500 placeholder-white/50 backdrop-blur-sm transition-all"
-            type="text"
-            placeholder="Scholar Number"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="scholar-number"
-          />
-        </div>
-        <div className="relative group">
-          <input
-            className="w-full py-3 px-4 text-white bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:border-blue-500 placeholder-white/50 backdrop-blur-sm transition-all"
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white focus:outline-none transition-colors"
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
-        </div>
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="admin"
-            checked={isAdmin}
-            onChange={(e) => setIsAdmin(e.target.checked)}
-            className="mr-2 rounded border-white/20 bg-white/5"
-          />
-          <label htmlFor="admin" className="text-white/90">Login as Admin</label>
-        </div>
-        <button
-          type="submit"
-          className="w-full py-3 text-white bg-blue-600/80 hover:bg-blue-400/80 rounded-lg backdrop-blur-sm font-semibold transition-all"
-        >
-          {isLoading ? "Logging In..." : "Log In"}
-        </button>
-        {error && (
-          <div className="text-red-400 text-center">{error}</div>
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+        {isAdminLogin && (
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 mb-3 sm:mb-4 rounded-r-md">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <ShieldAlert className="h-4 sm:h-5 w-4 sm:w-5 text-yellow-500" />
+              </div>
+              <div className="ml-2 sm:ml-3">
+                <p className="text-xs sm:text-sm text-yellow-700">
+                  This login is restricted to authorized administrative personnel only.
+                </p>
+              </div>
+            </div>
+          </div>
         )}
-        <div className="text-center">
-          <a 
-            href="https://userid.manit.ac.in/" 
-            className="text-white/90 hover:text-white transition-colors" 
-            target="_blank"
+
+        <div className="relative group">
+          <label htmlFor="ldapId" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 ml-1">
+            {isAdminLogin ? "Admin ID" : "LDAP ID"}
+          </label>
+          <div className="flex items-center border-2 rounded-lg group-focus-within:border-blue-500 group-hover:border-gray-300 transition-colors">
+            <User className="h-4 sm:h-5 w-4 sm:w-5 text-gray-400 ml-3" />
+            <input
+              type="text"
+              id="ldapId"
+              value={ldapId}
+              onChange={(e) => setLdapId(e.target.value)}
+              placeholder={isAdminLogin ? "Enter admin ID" : "Enter LDAP ID"}
+              className="w-full p-2 sm:p-3 pl-3 outline-none text-gray-700 bg-transparent text-sm"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="relative group">
+          <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 ml-1">
+            Password
+          </label>
+          <div className="flex items-center border-2 rounded-lg group-focus-within:border-blue-500 group-hover:border-gray-300 transition-colors">
+            <Lock className="h-4 sm:h-5 w-4 sm:w-5 text-gray-400 ml-3" />
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full p-2 sm:p-3 pl-3 outline-none text-gray-700 bg-transparent pr-10 text-sm"
+              required
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 text-gray-500 hover:text-gray-700 focus:outline-none"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 sm:h-5 w-4 sm:w-5" />
+              ) : (
+                <Eye className="h-4 sm:h-5 w-4 sm:w-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="adminLogin"
+              checked={isAdminLogin}
+              onChange={toggleIsAdmin}
+              className="h-3 sm:h-4 w-3 sm:w-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+            />
+            <label
+              htmlFor="adminLogin"
+              className="ml-2 block text-xs sm:text-sm text-gray-700 cursor-pointer"
+            >
+              Admin Login
+            </label>
+          </div>
+          <a
+            href="#"
+            className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium"
           >
-            Forgot Password?
+            Forgot password?
           </a>
         </div>
+
+        <button
+          type="submit"
+          className={`w-full px-4 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mt-2 text-sm sm:text-base ${isLoading ? "opacity-70 cursor-wait" : ""
+            }`}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center">
+              <svg className="animate-spin -ml-1 mr-2 h-4 sm:h-5 w-4 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Signing in...
+            </span>
+          ) : (
+            "Sign In"
+          )}
+        </button>
       </form>
+
+      <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-600">
+        <p>
+          Trouble logging in?{" "}
+          <a
+            href="#"
+            className="text-blue-600 hover:text-blue-800 transition-colors font-medium"
+          >
+            Contact support
+          </a>
+        </p>
+      </div>
     </div>
   );
 };

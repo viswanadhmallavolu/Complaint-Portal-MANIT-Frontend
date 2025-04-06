@@ -6,6 +6,8 @@ import { ComplaintDetails } from '../ComplaintDetails';
 import { AttachmentGallery } from '../AttachmentGallery';
 import { ComplaintModal as Modal } from '../ComplaintModal';
 import { RemarksModal } from './RemarksModal';
+// Replace direct toast import with useToast hook
+import { useToast } from '../../../context/ToastContext';
 
 interface ComplaintCardProps {
   complaint: Complaint;
@@ -20,16 +22,27 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
   onRemarksUpdate,
   style
 }) => {
+  // Use the toast context
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRemarksModalOpen, setIsRemarksModalOpen] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(complaint.status);
 
   const handleResolveClick = async () => {
     setIsLoading(true);
     try {
-      await onUpdate(complaint.id, { status: 'resolved' });
+      const result = await onUpdate(complaint.id, { status: 'resolved' });
+      // Update local state to reflect the change immediately
+      setCurrentStatus('resolved');
+      toast.success('Complaint resolved successfully', {
+        toastId: `resolve-${complaint.id}`
+      });
     } catch (error) {
       console.error('Error resolving complaint:', error);
+      toast.error('Failed to resolve complaint', {
+        toastId: `resolve-error-${complaint.id}`
+      });
     } finally {
       setIsLoading(false);
     }
@@ -39,8 +52,14 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
     try {
       await onRemarksUpdate(complaintId, remarks, files);
       setIsRemarksModalOpen(false);
+      toast.success('Remarks added successfully', {
+        toastId: `remarks-${complaintId}`
+      });
     } catch (error) {
       console.error('Error updating remarks:', error);
+      toast.error('Failed to add remarks', {
+        toastId: `remarks-error-${complaintId}`
+      });
     }
   };
 
@@ -81,7 +100,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
             {complaint.readStatus === ReadStatus.Viewed ? 'Viewed' : 'Not Viewed'}
           </span>
         </div>
-        <StatusBadge status={complaint.status} />
+        <StatusBadge status={currentStatus || complaint.status} />
       </div>
 
       {/* Updated button layout with right alignment */}
@@ -101,7 +120,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
           Add Remarks
         </button>
 
-        {complaint.status !== 'resolved' && (
+        {currentStatus !== 'resolved' && (
           <button
             onClick={handleResolveClick}
             disabled={isLoading}
@@ -118,7 +137,7 @@ const ComplaintCard: React.FC<ComplaintCardProps> = ({
         title="Details "
       >
         <div className="space-y-6">
-          <ComplaintDetails complaint={complaint} />
+          <ComplaintDetails complaint={{ ...complaint, status: currentStatus || complaint.status }} />
           <AttachmentGallery
             attachments={complaint.attachments}
             adminAttachments={complaint.AdminAttachments}

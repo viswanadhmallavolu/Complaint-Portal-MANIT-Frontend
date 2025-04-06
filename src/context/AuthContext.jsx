@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { useToast } from "./ToastContext";
 import student_api from "../api/student-api";
 import admin_api from "../api/admin-api";
 
@@ -13,9 +13,9 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const getApi = (isAdmin) => {
-
     const api = isAdmin ? admin_api : student_api;
     return api;
   };
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
             // Show specific error messages based on the error
             const errorMessage = error.response?.data?.message;
-
+            // Toast already handled by API interceptor
           }
         }
       }
@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }) => {
   }, [auth, navigate, isLoading]);
 
   return (
-    <AuthContext.Provider value={{ auth, login, logout, isLoading, setIsLoading }}>
+    <AuthContext.Provider value={{ auth, login, logout, isLoading, setIsLoading, setAuth }}>
       {children}
     </AuthContext.Provider>
   );

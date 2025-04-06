@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { AnalyticsData } from "../types/analytics";
-import { SOCKET_CONFIG } from "../constants/socket";
+import {
+	SOCKET_CONFIG,
+	SOCKET_URL,
+	SOCKET_NAMESPACE,
+} from "../constants/socket";
 import { useLocation, useParams } from "react-router-dom";
 import { COWDashboardData, WardenDashboardData } from "../types/dashboard";
-
 
 const MOCK_DATA: AnalyticsData = {
 	medicalData: {
@@ -52,12 +55,17 @@ export const useSocket = (url: string) => {
 
 		const connectSocket = async () => {
 			try {
-				socketRef.current = io(url, {
-					reconnectionAttempts: SOCKET_CONFIG.maxReconnectAttempts,
-					reconnectionDelay: SOCKET_CONFIG.reconnectDelay,
+				// Extract the base URL and namespace from the provided URL
+				const urlParts = url.split("/socket/");
+				const baseUrl = urlParts[0];
+				const namespace =
+					urlParts.length > 1 ? `/socket/${urlParts[1]}` : SOCKET_NAMESPACE;
+
+				// Connect to the Socket.io server with the proper namespace
+				// Don't use 'path' for namespace - it's for the HTTP endpoint
+				socketRef.current = io(`${baseUrl}${namespace}`, {
+					...SOCKET_CONFIG,
 					timeout: 30000,
-					withCredentials:true
-					// transports: ["websocket", "polling"],
 				});
 
 				socketRef.current.on("connect", () => {
@@ -156,7 +164,7 @@ export const useSocket = (url: string) => {
 					// Set up interval for warden dashboard data updates
 					categoryInterval.current = setInterval(() => {
 						console.log("Requesting updated Warden dashboard data");
-						socketRef.current?.emit("getWardenDashboardData",);
+						socketRef.current?.emit("getWardenDashboardData");
 					}, 5000);
 				}
 

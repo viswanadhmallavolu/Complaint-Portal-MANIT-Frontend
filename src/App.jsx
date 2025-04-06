@@ -12,17 +12,14 @@ import Feedback from "./pages/students/Feedback.tsx";
 import Utils from "./pages/admins/Util.tsx";
 import { useAuth } from "./context/AuthContext";
 import { useLocation } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import { useEffect, useMemo } from "react";
-import 'react-toastify/dist/ReactToastify.css';
-import './customToast.css';
 import SearchPage from "./pages/students/Search.tsx";
 import Contacts from "./pages/students/Contacts.tsx";
 import RoleBasedPage from "./pages/RoleBasedPage.tsx";
 import ComplaintSearchAdmin from "./pages/admins/ComplaintSearchAdmin.tsx";
 import DashboardPage from "./pages/admins/Hostel/COW/DashboardPage.tsx";
 import WardenDashboardPage from "./pages/admins/Hostel/Wardens/DashboardPage.tsx";
-import Landing from "./pages/landing.tsx"; // <-- added for landing page
+// import Landing from "./pages/landing.tsx"; // <-- added for landing page
 
 
 // Define warden roles constant
@@ -45,16 +42,6 @@ const App = () => {
 
   return (
     <>
-      <ToastContainer
-        position='top-right'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick={true}
-        pauseOnHover={false}
-        draggable={true}
-        className='custom-toast'
-      />
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/' element={<Layout />}>
@@ -62,7 +49,7 @@ const App = () => {
 
           {/* Student Routes */}
           <Route
-            path='/student/home'
+            path='/Student/home'
             element={
               <ProtectedRoute role='student'>
                 <Home />

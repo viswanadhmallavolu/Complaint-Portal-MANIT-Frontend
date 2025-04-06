@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 const ComplaintList = () => {
     const { category } = useParams<{ category: string }>();
     const navigate = useNavigate();
-    
+
 
     const isDefaultFilters = () => {
         const defaultFilters: ComplaintFilters = {
@@ -144,7 +144,7 @@ const ComplaintList = () => {
         fetchStatistics();
     }, [fetchStatistics]);
 
-    
+
 
     useEffect(() => {
         if (category) {
@@ -178,15 +178,25 @@ const ComplaintList = () => {
     const handleStatusUpdate = useCallback(async (complaintId: string, updates: Partial<Complaint>) => {
         try {
             if (category) {
-                await updateComplaintStatusAdmin(category, complaintId, updates.status || updates.readStatus || null);
+                const response = await updateComplaintStatusAdmin(category, complaintId, updates.status || updates.readStatus || null);
+                if (response && response.success) {
+                    // Backend returned success, update the complaint in state
+                    setComplaints(prev =>
+                        prev.map(c => c.id === complaintId ? { ...c, ...updates } as Complaint : c)
+                    );
+
+                    // Update statistics if this is a status change
+                    if (updates.status) {
+                        fetchStatistics();
+                    }
+                } else {
+                    toast.error('Failed to update complaint status');
+                }
             }
-            setComplaints(prev =>
-                prev.map(c => c.id === complaintId ? { ...c, ...updates } as Complaint : c)
-            );
         } catch (err) {
             handleError(err, 'Failed to update complaint.');
         }
-    }, [category, handleError]);
+    }, [category, handleError, fetchStatistics]);
 
     const handleRemarksUpdate = useCallback(async (complaintId: string, AdminRemarks: any, AdminAttachments: any) => {
         try {
