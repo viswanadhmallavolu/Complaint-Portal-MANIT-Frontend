@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './customToast.css';
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ToastProvider } from './context/ToastContext.jsx';
+// import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -35,3 +36,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>,
 )
+
+// serviceWorkerRegistration.register();
