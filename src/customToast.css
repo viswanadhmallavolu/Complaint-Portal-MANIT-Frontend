@@ -13,23 +13,33 @@
     margin: 0.5rem auto;
     border-radius: 0.5rem;
   }
-  
+
   /* Improve touch targets on mobile */
   .Toastify__close-button {
     padding: 6px;
   }
-  
-  /* Better positioning for mobile */
+
+  /* Top center positioning for mobile */
   .Toastify__toast-container {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 0.5rem;
     width: 90vw;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
-  
+
   .Toastify__toast {
     margin-bottom: 0.75rem;
     padding: 12px;
+    width: 100%;
   }
-  
+
   .Toastify__toast-body {
     font-size: 13px;
   }
@@ -131,7 +141,7 @@
   opacity: 1;
 }
 
-.Toastify__close-button > svg {
+.Toastify__close-button>svg {
   width: 16px;
   height: 16px;
 }
@@ -154,6 +164,7 @@
     transform: translateX(110%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -165,6 +176,7 @@
     transform: translateX(0);
     opacity: 1;
   }
+
   to {
     transform: translateX(110%);
     opacity: 0;

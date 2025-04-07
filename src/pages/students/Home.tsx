@@ -6,7 +6,8 @@ import {
   Building,
   Stethoscope,
   Shield,
-  UserCheck, // Add this import for the new icon
+  UserCheck,
+  Info, // Add this import for the info icon
 } from 'lucide-react';
 
 const cards = [
@@ -63,9 +64,17 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-8 lg:p-12">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Complaint Categories
-      </h1>
+      <div className="flex items-center justify-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 text-center">
+          Complaint Categories
+        </h1>
+        <div className="relative ml-2 group">
+          <Info size={20} className="text-blue-500 cursor-help" />
+          <div className="absolute md:left-0 md:bottom-full md:mb-2 right-0 top-full mt-2 md:mt-0 w-64 bg-white p-2 rounded shadow-lg text-sm text-gray-700 hidden group-hover:block z-10">
+            In this section you can see the complaints submitted by you
+          </div>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         {cards.map((card, index) => {
           const Icon = card.icon;

@@ -16,21 +16,22 @@ const Navbar: React.FC<NavbarProps> = ({ auth, logout }) => {
   const toast = useToast();
 
   const handleLogout = () => {
-    // Show a loading toast that will be updated after logout is complete
-    const loadingToastId = toast.info('Signing out...', { autoClose: false });
-
-    // Call the logout function
+    // Simply call the logout function without showing a toast
+    // The toast will be handled in the AuthContext
     logout();
-
-    // After logout is called, update the toast
-    setTimeout(() => {
-      toast.update(loadingToastId, {
-        type: 'success',
-        render: 'Successfully signed out!',
-        autoClose: 3000,
-      });
-    }, 500);
   };
+
+  // Close mobile menu on route change or window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <>
